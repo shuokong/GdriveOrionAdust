@@ -119,91 +119,62 @@ scale = sys.argv[2]
 panel = sys.argv[3]
 print snr, scale
 
+def getbindata(ffalma,ffmirex,mirexfac,contrms,snr):
+    hdu_alma = pyfits.open(ffalma)[0] 
+    if 'emap' in ffmirex:
+        hdu_mirex = pyfits.open(ffmirex)[1]
+    else:
+        hdu_mirex = pyfits.open(ffmirex)[0]
+    alma_data = hdu_alma.data
+    mirex_data = hdu_mirex.data*mirexfac # in g cm-2
+    print alma_data.shape
+    print mirex_data.shape
+    
+    minSigma = 0
+    maxSigma = 0.78
+    number_of_bins = 40.
+    deltaSigma = (maxSigma - minSigma) / number_of_bins
+    bins = np.arange(minSigma+deltaSigma/2.,maxSigma,deltaSigma)
+    contrms = contrms 
+    thres = snr*contrms # in unit of sigma, above which considered detection
+    probabilities = []
+    errors = []
+    bbins = []
+    for bb in bins:
+        mask = (mirex_data<bb+deltaSigma/2.) & (mirex_data>=bb-deltaSigma/2.)
+        temporary_alma = alma_data[mask] # alma values where mirex in [bb-deltaSigma/2.,bb+deltaSigma/2.)
+        temporary1_alma = temporary_alma[~np.isnan(temporary_alma)] # remove nan pixels from alma data
+        if len(temporary1_alma) == 0: continue
+        temporary2_alma = temporary1_alma[(temporary1_alma>=thres)] # alma snr >= thres is considered detection, this can be changed
+        prob = float(len(temporary2_alma))/float(len(temporary1_alma)) # probability = number of alma detection / number of mirex pixels in the bin
+        probabilities.append(prob)
+        err = (prob*(1.-prob)/float(len(temporary1_alma)))**0.5 
+        print len(temporary_alma),len(temporary2_alma),len(temporary1_alma),err
+        errors.append(err) 
+        bbins.append(bb) 
+    return bbins,probabilities,errors
 
-#hdu_alma = pyfits.open('Lane_on_Stefan_header.fits')[0] 
-#hdu_mirex = pyfits.open('emap_Orion_A_bw1.0.fits')[1]
-hdu_alma = pyfits.open('Lane_on_Stutz_header.fits')[0] 
-hdu_mirex = pyfits.open('herschelAmelia/OrionA_all_spire250_nh_mask_corr_apex.fits')[0]
-
-alma_data = hdu_alma.data
-alma_header = hdu_alma.header
-#mirex_data = hdu_mirex.data*1.67e22/4.27e23 # in g cm-2
-mirex_data = hdu_mirex.data/4.27e23 # in g cm-2
-mirex_header = hdu_mirex.header
-
-print alma_data.shape
-print mirex_data.shape
-
-#masked_mirex = np.copy(mirex_data)
-#masked_alma = np.copy(alma_data)
-#ymax,xmax = mirex_data.shape
-#circlex = 146
-#circley = 179
-#circler = 25.7
-#for y in range(ymax):
-#    for x in range(xmax):
-#        if ((y-circley)**2 + (x-circlex)**2)**0.5 > circler:
-#            masked_mirex[y,x] = -100
-#            masked_alma[y,x] = -100
-#        else:
-#            if masked_mirex[y,x] <= 0.58 or masked_mirex[y,x] >= 0.60:
-#                masked_mirex[y,x] = -100
-#                masked_alma[y,x] = -100
-#            else:
-#                if masked_alma[y,x] <= 3.:
-#                    masked_alma[y,x] = -100
-#
-#fits.writeto('masked_alma.fits',masked_alma,header=alma_header,clobber=True)
-#fits.writeto('masked_mirex.fits',masked_mirex,header=mirex_header,clobber=True)
-#sys.exit()
-
-minSigma = 0
-#minSigma = 0.58
-maxSigma = 0.78
-#maxSigma = 0.64
-number_of_bins = 40.
-#number_of_bins = 3.
-deltaSigma = (maxSigma - minSigma) / number_of_bins
-bins = np.arange(minSigma+deltaSigma/2.,maxSigma,deltaSigma)
-#print bins
-#sys.exit()
-contrms = 3.e-4
-thres = snr*contrms # in unit of sigma, above which considered detection
-probabilities = []
-errors = []
-bbins = []
-for bb in bins:
-    mask = (mirex_data<bb+deltaSigma/2.) & (mirex_data>=bb-deltaSigma/2.)
-    #print bb,bb-deltaSigma,bb+deltaSigma
-    #for y in range(ymax):
-    #    for x in range(xmax):
-    #        if mask[y,x] == True:
-    #            print y,x
-    temporary_alma = alma_data[mask] # alma values where mirex in [bb-deltaSigma/2.,bb+deltaSigma/2.)
-    temporary1_alma = temporary_alma[~np.isnan(temporary_alma)] # remove nan pixels from alma data
-    if len(temporary1_alma) == 0: continue
-    temporary2_alma = temporary1_alma[(temporary1_alma>=thres)] # alma snr >= thres is considered detection, this can be changed
-    prob = float(len(temporary2_alma))/float(len(temporary1_alma)) # probability = number of alma detection / number of mirex pixels in the bin
-    #sys.exit()
-    probabilities.append(prob)
-    err = (prob*(1.-prob)/float(len(temporary1_alma)))**0.5 
-    print len(temporary_alma),len(temporary2_alma),len(temporary1_alma),err
-    errors.append(err) 
-    bbins.append(bb) 
-
-print probabilities
 p=plt.figure(figsize=(7,6))
 plt.subplots_adjust(top=0.94,bottom=0.13,left=0.13,right=0.96)
 ax=p.add_subplot(111)
 #plt.xlim(0,150)
 ## linear scale
 if scale == 'lin':
-    x,y = (bbins,probabilities)
-    yerror = errors
-    plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',capthick=1.5)
+    ffalma = 'Lane_on_Stefan_header.fits'
+    ffmirex = 'emap_Orion_A_bw1.0.fits'
+    mirexfac = 1.67e22/4.27e23
+    contrms = 4.69e-4 # from Kirk paper table
+    x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
+    plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',capthick=1.5,zorder=2)
+    ffalma = 'rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
+    ffmirex = 'wadiao_mirex_on_alma_header_uvtaper.fits'
+    mirexfac = 1.
+    contrms = 2.e-4
+    x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
+    plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',capthick=1.5,zorder=3,alpha=0.5)
     plt.ylim(-0.1,1.1)
     plt.xlim(0,0.8)
-    ax.text(0.5, 0.95,panel+r'~~~$\rm SNR\geq'+str(snr)+'$',horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
+    ax.text(0.05, 0.95,panel+r'~~~$\rm SNR\geq'+str(snr)+'$',horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
     pdfname = 'dpf_snr'+str(snr)+'.pdf'
 ## logscale
 if scale == 'log':
