@@ -1,6 +1,7 @@
 import math
 import sys
 import os
+from scipy.optimize import curve_fit
 import numpy as np
 import telescope_sensitivity as ts
 import pyfits
@@ -13,6 +14,9 @@ import astropy.wcs as wcs
 rc('text', usetex=True)
 font = {'weight' : 'normal','size':16,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
+
+def gaus(x,a,x0,sigma):
+    return a*np.exp(-(x-x0)**2/(2*sigma**2))
 
 lletter = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
@@ -31,7 +35,6 @@ cols = len(corenames)
 usepeakvel = 0
 if usepeakvel == 1:
     diffvelocities = [nh3velocities-corevelocities12CO,nh3velocities-corevelocities13CO,nh3velocities-corevelocitiesC18O]
-    histograms = [np.histogram(nh3velocities-corevelocities12CO,bins='auto',range=(-8,8)),np.histogram(nh3velocities-corevelocities13CO,bins='auto',range=(-8,8)),np.histogram(nh3velocities-corevelocitiesC18O,bins='auto',range=(-8,8))]
     datafiles = {}
     for i in range(0,xpanels):
         for j in range(0,ypanels):
@@ -41,7 +44,8 @@ if usepeakvel == 1:
             coreveldiff = diffvelocities[panel-1]
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(-8,8))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
-            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'','linestyles':'k-','drawsty':'steps-mid'}},'xlim':[-8,8],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm diff}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
+            popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
+            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit','linestyles':'b-','drawsty':'default'}},'xlim':[-8,8],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm diff}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
     
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
@@ -64,17 +68,17 @@ if usepeakvel == 1:
             for datafilenum in range(len(datafiles['panel'+str(panelnum)]['lines'].keys())): 
                 x = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['x']
                 y = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['y']
-                xx = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['velocity']
-                print 'weird cores',corenames[(xx<-2)|(xx>2)]
+                #xx = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['velocity']
+                #print 'weird cores',corenames[(xx<-2)|(xx>2)]
                 #ax.hist(x,bins='auto',range=(xmin,xmax))
                 linestyle = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['linestyles']
                 legend = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['legends']
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
                 #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            #ax.legend(frameon=False,prop={'size':14},labelspacing=0.1) 
-            #if j == 0:
-            #    ax.set_title('core'+str(int(corenames[cc])))
+            ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
+            if j == 0:
+                ax.set_title('peak')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
             #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
@@ -116,7 +120,8 @@ if usemom1vel == 1:
             coreveldiff = diffvelocities[panel-1]
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(-8,8))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
-            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'','linestyles':'k-','drawsty':'steps-mid'}},'xlim':[-8,8],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm diff}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
+            popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
+            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit','linestyles':'b-','drawsty':'default'}},'xlim':[-8,8],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm diff}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
     
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
@@ -139,17 +144,17 @@ if usemom1vel == 1:
             for datafilenum in range(len(datafiles['panel'+str(panelnum)]['lines'].keys())): 
                 x = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['x']
                 y = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['y']
-                xx = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['velocity']
-                print 'weird cores',corenames[(xx<-2)|(xx>2)]
+                #xx = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['velocity']
+                #print 'weird cores',corenames[(xx<-2)|(xx>2)]
                 #ax.hist(x,bins='auto',range=(xmin,xmax))
                 linestyle = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['linestyles']
                 legend = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['legends']
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
                 #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            #ax.legend(frameon=False,prop={'size':14},labelspacing=0.1) 
-            #if j == 0:
-            #    ax.set_title('core'+str(int(corenames[cc])))
+            ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
+            if j == 0:
+                ax.set_title('mom1')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
             #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
