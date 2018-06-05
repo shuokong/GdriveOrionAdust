@@ -37,6 +37,20 @@ def beampixel(bmaj,bmin,bpa,corecenter,cellsize,beamfraction=1.): # bmaj, bmin, 
                 pixellist.append([x,y])
     return pixellist
 
+def mom0(deltav,intens):
+    """calculate 0th moment of input vel weighted by intens, both should be 1d list or array"""
+    return sum([deltav*intens[i] for i in range(len(intens))])
+
+def mom1(rawvel,rawintens,thres):
+    """calculate first moment of input vel weighted by intens, both should be 1d list or array"""
+    if len(rawvel) != len(rawintens):
+        print 'input have different size'
+        return False
+    usedata = (rawintens>thres)
+    vel = rawvel[usedata]
+    intens = rawintens[usedata]
+    return sum([vel[i]*intens[i] for i in range(len(vel))])/sum(intens)
+
 ########################
 #corenames, xw, yw = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/Getsources_cores_degree.txt',usecols=(0,1,2),unpack=True)
 corenames, xw, yw, coremasses = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/GAScores.txt',usecols=(0,1,2,3),unpack=True)
@@ -118,6 +132,8 @@ vlow = 0
 vhigh = 16
 cols = len(corenames)
 corevelocities = [[],[],[]]
+coremom0s = [[],[],[]]
+coremom1s = [[],[],[]]
 nh3velocities = [[]]
 coresnr = [[],[],[]]
 for cc in range(cols):
@@ -136,6 +152,7 @@ for cc in range(cols):
         ccvlsr = [-100]
     print 'ccnh3xx,ccnh3yy',ccnh3xx,ccnh3yy,'ccvlsr',ccvlsr
     nh3velocities[0].append(ccvlsr[0])
+    ccvlsrstyle = ['dashed']
     for i in range(0,xpanels):
         for j in range(0,ypanels):
             print lines[j]
@@ -160,6 +177,15 @@ for cc in range(cols):
             subvel = (rawvelocity > vlow) & (rawvelocity < vhigh) 
             rawintens = rawspectrum[subvel]
             velocity = rawvelocity[subvel]
+            coremom0 = mom0(cdelt3,rawintens)
+            coremom0s[panel-1].append(coremom0)
+            datarms = linerms[panel-1]
+            threshold = datarms*5.
+            try:
+                coremom1 = mom1(velocity,rawintens,threshold)
+                coremom1s[panel-1].append(coremom1)
+            except:
+                coremom1s[panel-1].append(-100)
             try:
                 peakind = np.nanargmax(rawintens)
             except:
@@ -167,14 +193,13 @@ for cc in range(cols):
                 coresnr[panel-1].append(0)
                 continue
             corevelocities[panel-1].append(velocity[peakind])
-            datarms = linerms[panel-1]
             snr = rawintens[peakind]/datarms
             coresnr[panel-1].append(snr)
             ymin = 0
             ymax = 0
             if np.nanmin(rawintens) < ymin: ymin = np.nanmin(rawintens)
             if np.nanmax(rawintens) > ymax: ymax = np.nanmax(rawintens)
-            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'data','linestyles':'k-','drawsty':'steps-mid'}},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':ccvlsr}
+            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'data','linestyles':'k-','drawsty':'steps-mid'}},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':[ccvlsr[0],coremom1],'vertlinestyles':[ccvlsrstyle[0],'dotted']}
     if datafiles == {}: continue
     for i in range(0,xpanels):
         for j in range(0,ypanels):
@@ -213,8 +238,9 @@ for cc in range(cols):
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
             ax.set_xticks(np.arange(datafiles['panel'+str(panelnum)]['xlim'][0],datafiles['panel'+str(panelnum)]['xlim'][1],0.1),minor=True)
             vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
-            for vl in vertlinex:
-                ax.vlines(vl,ydown,yup*0.6,linestyles='dashed',colors='b')
+            vertlinexstyles = datafiles['panel'+str(panelnum)]['vertlinestyles']
+            for nn,vl in enumerate(vertlinex):
+                ax.vlines(vl,ydown,yup*0.6,linestyles=vertlinexstyles[nn],colors='b')
             if j != ypanels-1:
                 ax.set_yticks(ax.get_yticks()[1:])
                 ax.set_xticklabels(ax.get_xlabel(),visible=False)
@@ -231,9 +257,9 @@ for cc in range(cols):
     plt.close(fig)
     #os.system('open '+pdfname)
     #os.system('cp '+pdfname+os.path.expandvars(' ${DROPATH}/highres'))
-savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],corevelocities[1],coresnr[1],corevelocities[2],coresnr[2],nh3velocities[0]),axis=1)
-np.savetxt('Lanecores_peak_velocities.txt',savetxtarr,fmt='%3d %15.5f %15.5f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f')
-#np.savetxt('Lanecores_all0p25channel_peak_velocities.txt',savetxtarr,fmt='%3d %15.5f %15.5f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f')
+savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],nh3velocities[0]),axis=1)
+np.savetxt('Lanecores_peak_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
+#np.savetxt('Lanecores_all0p25channel_peak_velocities.txt',savetxtarr,fmt='%3d %15.5f %15.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
 
 
 
