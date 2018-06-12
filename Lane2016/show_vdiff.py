@@ -16,25 +16,29 @@ font = {'weight' : 'normal','size':16,'family':'sans-serif','sans-serif':['Helve
 rc('font', **font)
 
 def gaus(x,a,x0,sigma):
-    return a*np.exp(-(x-x0)**2/(2*sigma**2))
+    return a/sigma*np.exp(-(x-x0)**2/(2*sigma**2))
 
 lletter = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
 #savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],corevelocities[1],coresnr[1],corevelocities[2],coresnr[2],nh3velocities[0]),axis=1)
-corenames,xw,yw,coremasses,corevelocities12CO,coresnr12CO,coremom0_12CO,coremom1_12CO,corevelocities13CO,coresnr13CO,coremom0_13CO,coremom1_13CO,corevelocitiesC18O,coresnrC18O,coremom0_C18O,coremom1_C18O,nh3velocities = np.loadtxt('Kirkcores_velocities.txt',unpack=True)
+corenames,xw,yw,coremasses,corevelocities12CO,coresnr12CO,coremom0_12CO,coremom1_12CO,coremom2_12CO,corevelocities13CO,coresnr13CO,coremom0_13CO,coremom1_13CO,coremom2_13CO,corevelocitiesC18O,coresnrC18O,coremom0_C18O,coremom1_C18O,coremom2_C18O,nh3velocities = np.loadtxt('convol32_Kirkcores_velocities.txt',unpack=True)
 
 linenames = [r'$\rm ^{12}CO(1$-$0)$',r'$\rm ^{13}CO(1$-$0)$',r'$\rm C^{18}O(1$-$0)$']
 xpanels = 1
 ypanels = len(linenames)
-xpanelwidth = 12
+xpanelwidth = 10
 ypanelwidth = 5
-vlow = -8
-vhigh = 8
+vlow = -6
+vhigh = 6
 mlow = np.nanmin(coremasses)
 mhigh = np.nanmax(coremasses)
 cols = len(corenames)
 
-usepeakvel = 0
+usepeakvel = 1
+usemom1vel = 1
+massvel = 0
+massmom1 = 0
+
 if usepeakvel == 1:
     diffvelocities = [nh3velocities-corevelocities12CO,nh3velocities-corevelocities13CO,nh3velocities-corevelocitiesC18O]
     datafiles = {}
@@ -47,7 +51,9 @@ if usepeakvel == 1:
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
-            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit','linestyles':'b-','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm diff}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
+            print 'popt',popt
+            print 'pcov',pcov
+            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(pcov[2,2]**0.5),'linestyles':'b-','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm peak}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
     
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
@@ -110,7 +116,6 @@ if usepeakvel == 1:
     os.system('open '+pdfname)
     os.system('cp '+pdfname+os.path.expandvars(' ~/GoogleDrive/imagesSFE/'))
 
-usemom1vel = 0
 if usemom1vel == 1:
     diffvelocities = [nh3velocities-coremom1_12CO,nh3velocities-coremom1_13CO,nh3velocities-coremom1_C18O]
     datafiles = {}
@@ -123,7 +128,9 @@ if usemom1vel == 1:
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
-            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit','linestyles':'b-','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm diff}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
+            print 'popt',popt
+            print 'pcov',pcov
+            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(pcov[2,2]**0.5),'linestyles':'b-','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm mom1}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
     
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
@@ -186,7 +193,6 @@ if usemom1vel == 1:
     os.system('open '+pdfname)
     os.system('cp '+pdfname+os.path.expandvars(' ~/GoogleDrive/imagesSFE/'))
 
-massvel = 1
 if massvel == 1:
     diffvelocities = [nh3velocities-corevelocities12CO,nh3velocities-corevelocities13CO,nh3velocities-corevelocitiesC18O]
     datafiles = {}
@@ -260,7 +266,6 @@ if massvel == 1:
     os.system('cp '+pdfname+os.path.expandvars(' ~/GoogleDrive/imagesSFE/'))
 
 
-massmom1 = 1
 if massmom1 == 1:
     diffvelocities = [nh3velocities-coremom1_12CO,nh3velocities-coremom1_13CO,nh3velocities-coremom1_C18O]
     datafiles = {}
