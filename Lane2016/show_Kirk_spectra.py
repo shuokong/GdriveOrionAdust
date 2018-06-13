@@ -64,7 +64,7 @@ def mom2(rawvel,rawintens,thres):
 
 ########################
 #corenames, xw, yw = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/Getsources_cores_degree.txt',usecols=(0,1,2),unpack=True)
-corenames, xw, yw, coremasses = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/GAScores.txt',usecols=(0,1,2,3),unpack=True)
+corenames, xw, yw, coremasses, Tkin, eTkin, sTkin = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/GAScores.txt',usecols=(0,1,2,3,10,11,12),unpack=True)
 worldcoord = np.stack((xw,yw,np.zeros_like(xw),np.zeros_like(xw)),axis=1)
 #worldcoord = np.stack((xw,yw,np.zeros_like(xw)),axis=1)
 
@@ -151,6 +151,7 @@ coremom0s = [[],[],[]]
 coremom1s = [[],[],[]]
 coremom2s = [[],[],[]]
 nh3velocities = [[]]
+nh3tkin = [[]]
 coresnr = [[],[],[]]
 for cc in range(cols):
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
@@ -168,6 +169,7 @@ for cc in range(cols):
         ccvlsr = [-100]
     print 'ccnh3xx,ccnh3yy',ccnh3xx,ccnh3yy,'ccvlsr',ccvlsr
     nh3velocities[0].append(ccvlsr[0])
+    nh3tkin[0].append(Tkin[cc])
     ccvlsrstyle = ['dashed']
     for i in range(0,xpanels):
         for j in range(0,ypanels):
@@ -281,9 +283,9 @@ for cc in range(cols):
     plt.close(fig)
     #os.system('open '+pdfname)
     #os.system('cp '+pdfname+os.path.expandvars(' ${DROPATH}/highres'))
-savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0]),axis=1)
+savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0],nh3tkin[0]),axis=1)
 #np.savetxt('Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
-np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
+np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.1f')
 #np.savetxt('Lanecores_all0p25channel_peak_velocities.txt',savetxtarr,fmt='%3d %15.5f %15.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
 
 
