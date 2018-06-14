@@ -1,7 +1,9 @@
 import pyfits
+import numpy as np
 
 templatehdulist = pyfits.open('OrionA_850_auto_mos_clip.fits')
 templatedata = templatehdulist[0].data[0,:,:]*3.1415926*(14.6/2.)**2/3.**2
+templatedata[np.isnan(templatedata)] = 0 # this is necessary for miriad convol, since convol does not handle well nan
 templatehdulist[0].header['NAXIS'] = 2
 templatehdulist[0].header['BMAJ'] = 14.6/3600.
 templatehdulist[0].header['BMIN'] = 14.6/3600.
