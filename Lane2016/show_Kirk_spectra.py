@@ -149,6 +149,13 @@ yy = pixcoord[:,1]
 nh3xx = xx
 nh3yy = yy
 hdulist.close()
+
+nh3efile = '/Users/shuokong/GoogleDrive/AncillaryData/GBT/OrionA_eVlsr_DR1_rebase3_flag.fits'
+print nh3efile
+hdulist = pyfits.open(nh3efile)
+scidata = hdulist[0].data[:,:] # in order: dec, ra
+enh3data = scidata 
+hdulist.close()
 print 'finish getting nh3 metadata'
 
 singleGaussDict = {
@@ -392,98 +399,109 @@ singleGaussDict = {
                   }
 
 multiGaussDict = {
-                  '19':{'13CO':[8,10],'C18O':[8,10]},
-                  '21':{'13CO':[8,9.5],'C18O':[8,9.5]},
-                  '26':{'13CO':[9,10.5],'C18O':[9,10.5]},
-                  '31':{'13CO':[8,9,10],'C18O':[8]},
-                  '33':{'13CO':[9,11],'C18O':[9,11]},
-                  '36':{'13CO':[8],'C18O':[8]}, # outflow?
-                  '38':{'13CO':[8],'C18O':[8]}, # outflow?
-                  '39':{'13CO':[11,13],'C18O':[11,13]},
-                  '40':{'13CO':[7,10.5],'C18O':[7]},
-                  '42':{'13CO':[11,13],'C18O':[11]},
-                  '47':{'13CO':[7,8.5],'C18O':[7,8.5]},
-                  '52':{'13CO':[8,9],'C18O':[8,9]},
-                  '55':{'13CO':[11,13],'C18O':[11,13]},
-                  '56':{'13CO':[8.5,11],'C18O':[8.5,11]},
-                  '59':{'13CO':[7,8.5],'C18O':[8.5]},
-                  '60':{'13CO':[7,10.5],'C18O':[7]},
-                  '62':{'13CO':[9,10.5],'C18O':[9,10.5]},
-                  '71':{'13CO':[9,11],'C18O':[9,11]},
-                  '73':{'13CO':[7,8],'C18O':[7,8]},
-                  '74':{'13CO':[8],'C18O':[8]}, # outflow?
-                  '77':{'13CO':[7.5,9.5],'C18O':[7.5,9.5]},
-                  '80':{'13CO':[9,11],'C18O':[9,11]},
-                  '82':{'13CO':[7,9,11],'C18O':[7]},
-                  '83':{'13CO':[7,11],'C18O':[7,8]},
-                  '86':{'13CO':[8.5,10.5],'C18O':[8.5,10.5]},
-                  '88':{'13CO':[11,13],'C18O':[11,13]},
-                  '93':{'13CO':[8,10],'C18O':[8]},
-                  '95':{'13CO':[10,11,13],'C18O':[11]},
-                  '96':{'13CO':[8,9,10],'C18O':[8]},
-                  '97':{'13CO':[8.5,9.5,11],'C18O':[9,11]},
-                  '98':{'13CO':[11,13],'C18O':[11,13]},
-                  '99':{'13CO':[11,13],'C18O':[11,13]},
-                  '102':{'13CO':[7,8,9],'C18O':[7,8,9]},
-                  '104':{'13CO':[11,13],'C18O':[11]},
-                  '106':{'13CO':[7,9],'C18O':[7,9]},
-                  '111':{'13CO':[8,10],'C18O':[8,10]},
-                  '114':{'13CO':[11,13],'C18O':[11,13]},
-                  '120':{'13CO':[7,9.5],'C18O':[7,9.5]},
-                  '125':{'13CO':[8,11],'C18O':[8]},
-                  '126':{'13CO':[6.5,8],'C18O':[8]},
-                  '129':{'13CO':[8,9],'C18O':[9]},
-                  '130':{'13CO':[6,8,9],'C18O':[6,8,9]},
-                  '132':{'13CO':[7,10],'C18O':[7]},
-                  '136':{'13CO':[6,8],'C18O':[8]},
-                  '142':{'13CO':[8,10],'C18O':[8,10]},
-                  '151':{'13CO':[6,8.5],'C18O':[8.5]},
-                  '152':{'13CO':[8,9],'C18O':[8,9]},
-                  '153':{'13CO':[7,9],'C18O':[7,9]},
-                  '154':{'13CO':[7,10],'C18O':[7]},
-                  '156':{'13CO':[7,9],'C18O':[7,9]},
-                  '157':{'13CO':[7,9],'C18O':[7,9]},
-                  '162':{'13CO':[7,8,9],'C18O':[7,8,9]},
-                  '164':{'13CO':[7,8,10],'C18O':[7,8,10]},
-                  '165':{'13CO':[7,8,9],'C18O':[7,8,9]},
-                  '167':{'13CO':[7,9],'C18O':[7,9]},
-                  '171':{'13CO':[8,9],'C18O':[7,8,9]},
-                  '172':{'13CO':[9,10.5],'C18O':[10.5]},
-                  '175':{'13CO':[9.5,11,13],'C18O':[11,13]},
-                  '176':{'13CO':[8,10],'C18O':[7.5]},
-                  '177':{'13CO':[7,8.5,9.5],'C18O':[7,8.5,9.5]},
-                  '179':{'13CO':[7,8.5],'C18O':[7,8.5]},
-                  '181':{'13CO':[6,8],'C18O':[6,8]},
-                  '184':{'13CO':[6.5,8,9],'C18O':[6.5,8,9]},
-                  '186':{'13CO':[7.5,9,11],'C18O':[7.5,9]},
-                  '187':{'13CO':[7,8,9],'C18O':[7,8,9]},
-                  '189':{'13CO':[7.5,9],'C18O':[7.5,9]},
-                  '193':{'13CO':[11,13],'C18O':[11]},
-                  '197':{'13CO':[6,8],'C18O':[8]},
-                  '199':{'13CO':[8,9],'C18O':[8,9]},
-                  '200':{'13CO':[5.5,8],'C18O':[7]},
-                  '201':{'13CO':[8,10],'C18O':[8,9]},
-                  '203':{'13CO':[5.5,7,8.5],'C18O':[5.5,7,8.5]},
-                  '204':{'13CO':[8.5,9.5],'C18O':[8.5,9.5]},
-                  '205':{'13CO':[8,9],'C18O':[8,9]},
-                  '206':{'13CO':[8,9],'C18O':[8,9]},
-                  '208':{'13CO':[6,8],'C18O':[8]},
-                  '209':{'13CO':[8,10],'C18O':[8,10]},
-                  '213':{'13CO':[8,9],'C18O':[8,9]},
-                  '215':{'13CO':[7,8,9],'C18O':[7,8,9]},
-                  '216':{'13CO':[8.5,10.5],'C18O':[8.5,10.5]},
-                  '217':{'13CO':[9,11],'C18O':[11]},
-                  '218':{'13CO':[7,9],'C18O':[7,9]},
-                  '219':{'13CO':[10,12],'C18O':[10,12]},
-                  '221':{'13CO':[7.5,8.5,10],'C18O':[8]},
-                  '223':{'13CO':[7,8.5],'C18O':[7,8.5]},
-                  '224':{'13CO':[8,9],'C18O':[8,9]},
-                  '225':{'13CO':[7,8.5],'C18O':[7,8.5]},
-		  '232':{'13CO':[8,9.5],'C18O':[8,9.5]},
-		  '233':{'13CO':[6.5,8,10],'C18O':[6.5]},
-                  '234':{'13CO':[7,9],'C18O':[7,9]},
-                  '236':{'13CO':[8,9.5],'C18O':[8,9.5]},
-                  '237':{'13CO':[8,9,10],'C18O':[8]},
+                  '41':{'13CO':[8,10],'C18O':[8,10]},
+                  '43':{'13CO':[8,9.5],'C18O':[8,9.5]},
+                  '54':{'13CO':[9,10.5],'C18O':[9,10.5]},
+                  '59':{'13CO':[8,9,10],'C18O':[8]},
+                  '65':{'13CO':[9,11],'C18O':[9,11]},
+                  '70':{'13CO':[8],'C18O':[8]}, # outflow? # 13CO bad fit
+                  '73':{'13CO':[8],'C18O':[8]}, # outflow?
+                  '77':{'13CO':[11,13],'C18O':[11,13]},
+                  '81':{'13CO':[7,10.5],'C18O':[7]},
+                  '83':{'13CO':[11,13],'C18O':[11]}, # 13CO bad fit
+                  '97':{'13CO':[7,8.5],'C18O':[7,8.5]},
+                  '99':{'13CO':[6,8.5],'C18O':[8.5]},
+                  '107':{'13CO':[8,9],'C18O':[8,9]},
+                  '110':{'13CO':[11.2,13.2],'C18O':[11,13]}, # 13CO bad fit
+                  '114':{'13CO':[8.5,11],'C18O':[8.5,11]},
+                  '117':{'13CO':[9.1,10.5,13],'C18O':[10.5]}, # 13CO bad fit
+                  '121':{'13CO':[7,8.5],'C18O':[8.5]},
+                  '122':{'13CO':[7,10.5],'C18O':[7]},
+                  '127':{'13CO':[9,10.5],'C18O':[9,10.5]},
+                  '133':{'13CO':[6.5,8],'C18O':[6.3,7.9]},
+                  '144':{'13CO':[9,11],'C18O':[9,11]},
+                  '153':{'13CO':[7,8],'C18O':[7,8]},
+                  '154':{'13CO':[8],'C18O':[8]}, # outflow? # C18O bad fit # 13CO bad fit
+                  '165':{'13CO':[7.5,9.5],'C18O':[7.5,9.5]},
+                  '169':{'13CO':[9,11],'C18O':[9,11]},
+                  '172':{'13CO':[6.5,8.8,10.5],'C18O':[7]}, # 13CO bad fit
+                  '174':{'13CO':[7.2,10.7],'C18O':[7,8]},
+                  '180':{'13CO':[8.5,10.5],'C18O':[8.5,10.5]},
+                  '182':{'13CO':[11,13],'C18O':[11,13]},
+                  '194':{'13CO':[8,10],'C18O':[8]},
+                  '198':{'13CO':[10.3,11.3,13],'C18O':[11]},
+                  '199':{'13CO':[8,9,10],'C18O':[8]}, # 13CO bad fit
+                  '203':{'13CO':[8.5,9.5,11],'C18O':[9,11]},
+                  '207':{'13CO':[11,13],'C18O':[11,13]},
+                  '208':{'13CO':[11,13],'C18O':[11,13]},
+                  '220':{'13CO':[7,8,9],'C18O':[7,8,9]}, # 13CO bad fit
+                  '223':{'13CO':[10.8,12.8],'C18O':[11]}, # 13CO bad fit
+                  '226':{'13CO':[7,9],'C18O':[7,9]},
+                  '235':{'13CO':[8,10],'C18O':[8,10]},
+                  '240':{'13CO':[11.0,13.0],'C18O':[11]},
+                  '241':{'13CO':[11,13],'C18O':[11,13]},
+                  '254':{'13CO':[7,9.5],'C18O':[7,9.5]}, # C18O bad fit # 13CO bad fit
+                  '264':{'13CO':[8,11],'C18O':[8]},
+                  '265':{'13CO':[6.5,8],'C18O':[8]},
+                  '274':{'13CO':[8,9],'C18O':[9]},
+                  '282':{'13CO':[6,8,9],'C18O':[6,8,9]},
+                  '287':{'13CO':[7,10],'C18O':[7]},
+                  '294':{'13CO':[6,8],'C18O':[8]},
+                  '310':{'13CO':[10.5,12],'C18O':[10.5]},
+                  '312':{'13CO':[5,8,11],'C18O':[8]},
+                  '317':{'13CO':[8,10],'C18O':[8,10]},
+                  '357':{'13CO':[6,8.5],'C18O':[8.5]},
+                  '361':{'13CO':[8,9],'C18O':[8,9]},
+                  '362':{'13CO':[7,9],'C18O':[7,9]},
+                  '363':{'13CO':[7,10],'C18O':[7]},
+                  '371':{'13CO':[7,9],'C18O':[7.3,8.8]},
+                  '387':{'13CO':[7,9],'C18O':[7,9]},
+                  '401':{'13CO':[10.5,11.5],'C18O':[11]},
+                  '405':{'13CO':[7,8,9],'C18O':[7,8,9]},
+                  '413':{'13CO':[7,8,10],'C18O':[7,8,10]},
+                  '420':{'13CO':[7,8,9],'C18O':[7,8,9]},
+                  '431':{'13CO':[7,9],'C18O':[7,9]},
+                  '441':{'13CO':[8,9],'C18O':[7,8,9]},
+                  '461':{'13CO':[9,10.5],'C18O':[10.5]},
+                  '464':{'13CO':[9.5,11,13],'C18O':[11,13]},
+                  '469':{'13CO':[8,10],'C18O':[7.5]},
+                  '470':{'13CO':[7,8.5,9.5],'C18O':[7,8.5,9.5]},
+                  '478':{'13CO':[7,8.5],'C18O':[7,8.5]}, # C18O bad fit
+                  '493':{'13CO':[6,8],'C18O':[6,8]},
+                  '497':{'13CO':[7,10],'C18O':[10]},
+                  '508':{'13CO':[6.5,8,9],'C18O':[6.5,8,9]},
+                  '524':{'13CO':[7.5,9,11],'C18O':[7.5,9]},
+                  '535':{'13CO':[7,8,9],'C18O':[7,8,9]},
+                  '538':{'13CO':[7.5,9],'C18O':[7.5,9]},
+                  '539':{'13CO':[6,7.5,12],'C18O':[7.5]},
+                  '545':{'13CO':[11.0,12.8],'C18O':[11]},
+                  '570':{'13CO':[6,8],'C18O':[8]},
+                  '571':{'13CO':[6.0,8.0],'C18O':[8]},
+                  '572':{'13CO':[8,9],'C18O':[8,9]},
+                  '584':{'13CO':[5.8,7.5],'C18O':[7]}, # 13CO bad fit
+                  '586':{'13CO':[8.2,10.1],'C18O':[8.0,8.9]}, # C18O bad fit # 13CO bad fit
+                  '592':{'13CO':[5.5,7,8.5],'C18O':[5.5,7,8.5]}, # 13CO bad fit
+                  '594':{'13CO':[8.5,9.5],'C18O':[8.5,9.5]},
+                  '595':{'13CO':[8,9],'C18O':[8,9]},
+                  '601':{'13CO':[8,9],'C18O':[8,9]},
+                  '610':{'13CO':[6.5,8],'C18O':[8]},
+                  '611':{'13CO':[8,10],'C18O':[7.8,9.5]},
+                  '623':{'13CO':[8,9],'C18O':[8,9]},
+                  '632':{'13CO':[7,8,9],'C18O':[7,8,9]},
+                  '637':{'13CO':[8.5,10.5],'C18O':[8.5,10.5]},
+                  '648':{'13CO':[9,11],'C18O':[11]},
+                  '686':{'13CO':[7.0,8.8,9.9],'C18O':[7.1,8.8]}, # C18O bad fit
+                  '691':{'13CO':[10,12],'C18O':[10,12]},
+                  '701':{'13CO':[7.5,8.5,10],'C18O':[8]},
+                  '707':{'13CO':[7,8.5,10],'C18O':[7.1,8.6]},
+                  '721':{'13CO':[7.9,9.5],'C18O':[7.9,9.5]}, # 13CO bad fit
+                  '734':{'13CO':[7,9],'C18O':[7,8.5]},
+                  '750':{'13CO':[7,8.5,11],'C18O':[7,8.5]},
+                  '835':{'13CO':[8,9.5],'C18O':[8,9.5]},
+                  '869':{'13CO':[6.5,8,10],'C18O':[6.5]},
+                  '871':{'13CO':[7,9],'C18O':[7,9]},
+                  '879':{'13CO':[8,9.5],'C18O':[8,9.5]},
+                  '907':{'13CO':[8,9,10],'C18O':[8]},
                   }
 
 linenames = [r'$\rm ^{12}CO(1$-$0)$',r'$\rm ^{13}CO(1$-$0)$',r'$\rm C^{18}O(1$-$0)$']
@@ -500,14 +518,19 @@ coremom0s = [[],[],[]]
 coremom1s = [[],[],[]]
 coremom2s = [[],[],[]]
 nh3velocities = [[]]
+nh3evelocities = [[]]
 nh3tkin = [[]]
 coresnr = [[],[],[]]
 coregaus_x0 = [[],[],[]]
+coregaus_ex0 = [[],[],[]]
 coregaus_sigma = [[],[],[]]
+coregaus_esigma = [[],[],[]]
 for cc in range(cols):
+    #if str(int(corenames[cc])) not in multiGaussDict.keys(): continue
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
     #pdfname='corespectra/averspec_Kirk_core'+str(cc+1)+'.pdf'
+    pdfname='corespectra/single_convol32_averspec_Kirk_core'+str(cc+1)+'.pdf'
     pdfname='corespectra/convol32_averspec_Kirk_core'+str(cc+1)+'.pdf'
     #pdfname='corespectra/averspec_all0p25channel_core'+str(cc+1)+'.pdf'
     datafiles = {}
@@ -516,10 +539,13 @@ for cc in range(cols):
     ccnh3yy = int(nh3yy[cc])
     try:
         ccvlsr = [nh3data[ccnh3yy,ccnh3xx]]
+        ccevlsr = [enh3data[ccnh3yy,ccnh3xx]]
     except:
         ccvlsr = [-100]
-    print 'ccnh3xx,ccnh3yy',ccnh3xx,ccnh3yy,'ccvlsr',ccvlsr
+        ccevlsr = [-100]
+    print 'ccnh3xx,ccnh3yy',ccnh3xx,ccnh3yy,'ccvlsr',ccvlsr,'ccevlsr',ccevlsr
     nh3velocities[0].append(ccvlsr[0])
+    nh3evelocities[0].append(ccevlsr[0])
     nh3tkin[0].append(Tkin[cc])
     ccvlsrstyle = ['dashed']
     for i in range(0,xpanels):
@@ -546,32 +572,42 @@ for cc in range(cols):
             subvel = (rawvelocity > vlow) & (rawvelocity < vhigh) 
             rawintens = rawspectrum[subvel]
             velocity = rawvelocity[subvel]
-            coresavetxtarr = np.stack((velocity,rawintens),axis=1)
-            np.savetxt('corespectra/datapoints/'+molnames[j]+'/convol32_Kirkcore'+str(int(corenames[cc]))+'_'+molnames[j]+'.txt',coresavetxtarr,fmt='%7.2f %10.2e')
+            #coresavetxtarr = np.stack((velocity,rawintens),axis=1)
+            #np.savetxt('corespectra/datapoints/'+molnames[j]+'/convol32_Kirkcore'+str(int(corenames[cc]))+'_'+molnames[j]+'.txt',coresavetxtarr,fmt='%7.2f %10.2e')
             coremom0 = mom0(cdelt3/1.e3,rawintens)
             coremom0s[panel-1].append(coremom0)
             if j > 0:
-                if str(cc+1) in multiGaussDict.keys():
+                if str(int(corenames[cc])) in multiGaussDict.keys():
                     guess = []
-                    for ii in multiGaussDict[str(cc+1)][molnames[j]]:
-                        guess += [ii,0.5,0.5]
+                    for ii in multiGaussDict[str(int(corenames[cc]))][molnames[j]]:
+                        guess += [ii,0.2,0.2]
                     popt, pcov = curve_fit(multigaus, velocity, rawintens, p0=guess, maxfev=100000)
-                    component_number = len(multiGaussDict[str(cc+1)][molnames[j]])
+                    perr = np.sqrt(np.diag(pcov))
+                    component_number = len(multiGaussDict[str(int(corenames[cc]))][molnames[j]])
                     component_velocities = [abs(popt[ii*3]-ccvlsr[0]) for ii in range(component_number)]
                     closest_index = np.argmin(component_velocities)
                     closest_velocity = popt[closest_index*3]
+                    closest_evelocity = perr[closest_index*3]
                     closest_sigma = popt[closest_index*3+2]
+                    closest_esigma = perr[closest_index*3+2]
                     coregaus_x0[panel-1].append(closest_velocity)
+                    coregaus_ex0[panel-1].append(closest_evelocity)
                     coregaus_sigma[panel-1].append(closest_sigma)
+                    coregaus_esigma[panel-1].append(closest_esigma)
                 else:
                     guess = []
                     for ii in singleGaussDict[str(cc+1)][molnames[j]]:
                         guess += [ii,0.5,0.5]
                     popt, pcov = curve_fit(multigaus, velocity, rawintens, p0=guess)
+                    perr = np.sqrt(np.diag(pcov))
                     closest_velocity = popt[0]
+                    closest_evelocity = perr[0]
                     closest_sigma = popt[2]
+                    closest_esigma = perr[2]
                     coregaus_x0[panel-1].append(closest_velocity)
+                    coregaus_ex0[panel-1].append(closest_evelocity)
                     coregaus_sigma[panel-1].append(closest_sigma)
+                    coregaus_esigma[panel-1].append(closest_esigma)
             datarms = linerms[panel-1]
             threshold = datarms*5.
             try:
@@ -600,7 +636,7 @@ for cc in range(cols):
             if np.nanmax(rawintens) > ymax: ymax = np.nanmax(rawintens)
             datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'data','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':[ccvlsr[0],coremom1],'vertlinestyles':[ccvlsrstyle[0],'dotted'],'vertlinecolors':['b','b'],'vertlinewidths':[4,2],'vertlinelengths':[0.5,0.6]}
             if j > 0:
-                datafiles['panel'+str(panel)]['lines']['2']={'x':velocity,'y':multigaus(velocity,*popt),'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(pcov[2,2]**0.5),'linestyles':'g-','drawsty':'default'}
+                datafiles['panel'+str(panel)]['lines']['2']={'x':velocity,'y':multigaus(velocity,*popt),'legends':'fit','linestyles':'g-','drawsty':'default'}
                 datafiles['panel'+str(panel)]['vertlines'].append(closest_velocity)
                 datafiles['panel'+str(panel)]['vertlinestyles'].append('dashed')
                 datafiles['panel'+str(panel)]['vertlinecolors'].append('g')
@@ -631,7 +667,7 @@ for cc in range(cols):
                     peakvelocity = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['peakvelocity']
                     peaksnr = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['peaksnr']
                     ax.vlines(peakvelocity,ydown,yup,linestyle='dotted')
-                    ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
+                    #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
             #ax.legend(frameon=False,prop={'size':14},labelspacing=0.1) 
             if j == 0:
                 ax.set_title('core'+str(int(corenames[cc])))
@@ -667,9 +703,9 @@ for cc in range(cols):
     plt.close(fig)
     #os.system('open '+pdfname)
     #os.system('cp '+pdfname+os.path.expandvars(' ${DROPATH}/highres'))
-savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0],nh3tkin[0],coregaus_x0[1],coregaus_sigma[1],coregaus_x0[2],coregaus_sigma[2]),axis=1)
-#np.savetxt('Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
-np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.1f %7.2f %7.2f %7.2f %7.2f')
+savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0],nh3evelocities[0],nh3tkin[0],coregaus_x0[1],coregaus_ex0[1],coregaus_sigma[1],coregaus_esigma[1],coregaus_x0[2],coregaus_ex0[2],coregaus_sigma[2],coregaus_esigma[2]),axis=1)
+np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
+#np.savetxt('single_convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
 #np.savetxt('Lanecores_all0p25channel_peak_velocities.txt',savetxtarr,fmt='%3d %15.5f %15.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
 
 
