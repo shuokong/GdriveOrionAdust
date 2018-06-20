@@ -43,8 +43,8 @@ mhigh = np.nanmax(coremasses)
 cols = len(corenames)
 
 usepeakvel = 0
-usemom1vel = 1
-usegausvel = 0
+usemom1vel = 0
+usegausvel = 1
 massvel = 0
 massmom1 = 0
 tkinhist = 0
@@ -254,7 +254,7 @@ if usemom1vel == 1:
 if usegausvel == 1:
     diffvelocities = [nh3velocities-coregaus_x0_C18O,nh3velocities-coregaus_x0_13CO,nh3velocities-coregaus_x0_C18O] # first element dummy
     #print 'nh3velocities',nh3velocities
-    removeind = (nh3velocities<=0.)|np.isnan(nh3velocities)|(coregaus_x0_13CO<0)|(coregaus_x0_C18O<0)
+    removeind = (nh3velocities<=0.)|(nh3velocities>=16.)|np.isnan(nh3velocities)|(coregaus_x0_13CO<=0.)|(coregaus_x0_13CO>=16.)|np.isnan(coregaus_x0_13CO)|(coregaus_x0_C18O<=0.)|(coregaus_x0_C18O>=16.)|np.isnan(coregaus_x0_C18O)
     #print 'removeind',removeind
     #sys.exit()
     datafiles = {}
