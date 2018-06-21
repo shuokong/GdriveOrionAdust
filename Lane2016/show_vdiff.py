@@ -67,7 +67,7 @@ if usepeakvel == 1:
             perr = np.sqrt(np.diag(pcov))
             print 'popt',popt
             print 'perr',perr
-            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'b-','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm peak}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
+            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm peak}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
             coreveldiff = diffvelocities[panel-1][(ysoyes)&(~removeind)]
             print 'len(coreveldiff)',len(coreveldiff)
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
@@ -126,9 +126,9 @@ if usepeakvel == 1:
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             xlabel = datafiles['panel'+str(panelnum)]['xlabel']
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
-            #vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
-            #for vl in vertlinex:
-            #    ax.vlines(vl,ydown,yup*0.6,linestyles='dashed',colors='b')
+            vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
+            for vl in vertlinex:
+                ax.vlines(vl,ydown,yup*0.9,linestyles='dotted',colors='k')
             if j != ypanels-1:
                 ax.set_yticks(ax.get_yticks()[1:])
                 ax.set_xticklabels(ax.get_xlabel(),visible=False)
@@ -168,7 +168,7 @@ if usemom1vel == 1:
             perr = np.sqrt(np.diag(pcov))
             print 'popt',popt
             print 'perr',perr
-            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'b-','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,60],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm mom1}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
+            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,60],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm mom1}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
             coreveldiff = diffvelocities[panel-1][(ysoyes)&(~removeind)]
             print 'len(coreveldiff)',len(coreveldiff)
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
@@ -227,9 +227,9 @@ if usemom1vel == 1:
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             xlabel = datafiles['panel'+str(panelnum)]['xlabel']
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
-            #vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
-            #for vl in vertlinex:
-            #    ax.vlines(vl,ydown,yup*0.6,linestyles='dashed',colors='b')
+            vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
+            for vl in vertlinex:
+                ax.vlines(vl,ydown,yup*0.9,linestyles='dotted',colors='k')
             if j != ypanels-1:
                 ax.set_yticks(ax.get_yticks()[1:])
                 ax.set_xticklabels(ax.get_xlabel(),visible=False)
@@ -272,7 +272,7 @@ if usegausvel == 1:
             perr = np.sqrt(np.diag(pcov))
             print 'popt',popt
             print 'perr',perr
-            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'all','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[]}
+            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'all','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
             coreveldiff = diffvelocities[panel-1][(ysoyes)&(~removeind)]
             print 'len(coreveldiff)',len(coreveldiff)
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
@@ -332,9 +332,9 @@ if usegausvel == 1:
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             xlabel = datafiles['panel'+str(panelnum)]['xlabel']
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
-            #vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
-            #for vl in vertlinex:
-            #    ax.vlines(vl,ydown,yup*0.6,linestyles='dashed',colors='b')
+            vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
+            for vl in vertlinex:
+                ax.vlines(vl,ydown,yup*0.9,linestyles='dotted',colors='k')
             if j != ypanels-1:
                 ax.set_yticks(ax.get_yticks()[1:])
                 ax.set_xticklabels(ax.get_xlabel(),visible=False)
@@ -505,7 +505,12 @@ if massmom1 == 1:
 if tkinhist == 1:
     xpanels = 1
     ypanels = 1
-    print 'Tkin, mean',np.nanmean(nh3tkin),'median',np.nanmedian(nh3tkin),'min',np.nanmin(nh3tkin),'max',np.nanmax(nh3tkin)
+    tkin_mean = np.nanmean(nh3tkin)
+    tkin_median = np.nanmedian(nh3tkin)
+    tkin_min = np.nanmin(nh3tkin)
+    tkin_max = np.nanmax(nh3tkin)
+    print 'Tkin, mean',tkin_mean,'median',tkin_median,'min',tkin_min,'max',tkin_max
+    print 'sound speed cs, mean',(tkin_mean*1.667*8.31e7/2.513)**0.5/1.e5,'median',(tkin_median*1.667*8.31e7/2.513)**0.5/1.e5,'min',(tkin_min*1.667*8.31e7/2.513)**0.5/1.e5,'max',(tkin_max*1.667*8.31e7/2.513)**0.5/1.e5
     tlow,thigh = (5,40)
     datafiles = {}
     for i in range(0,xpanels):
@@ -519,7 +524,9 @@ if tkinhist == 1:
                                                                            #'2':{'x':bincenter,'y':gaus(bincenter,*popt),'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'b-','drawsty':'default'},
                                                                            },'xlim':[tlow,thigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$T_{\rm k,NH_3}~\rm (K)$','ylabel':r'$\rm number$','text':'','vertlines':[]}
     
-    fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
+    xpanelwidth = 7
+    ypanelwidth = 6
+    fig=plt.figure(figsize=(xpanelwidth*xpanels,ypanelwidth*ypanels))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
     pdfname='tkinhist.pdf'
     for i in range(0,xpanels):
