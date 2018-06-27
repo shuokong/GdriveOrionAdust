@@ -79,13 +79,13 @@ def mom2(rawvel,rawintens,thres):
 #corenames, xw, yw = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/Getsources_cores_degree.txt',usecols=(0,1,2),unpack=True)
 corenames, xw, yw, coremasses, Tkin, eTkin, sTkin = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/GAScores.txt',usecols=(0,1,2,3,10,11,12),unpack=True)
 #corenames, xw, yw, coremasses, Tkin, eTkin, sTkin = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/test.txt',usecols=(0,1,2,3,10,11,12),unpack=True)
-worldcoord = np.stack((xw,yw,np.zeros_like(xw),np.zeros_like(xw)),axis=1)
-#worldcoord = np.stack((xw,yw,np.zeros_like(xw)),axis=1)
+worldcoord4 = np.stack((xw,yw,np.zeros_like(xw),np.zeros_like(xw)),axis=1)
+worldcoord3 = np.stack((xw,yw,np.zeros_like(xw)),axis=1) # Alyssa cubes
 
 cellsize = 2. # voxel size in arcsec
 #lines = ['/Users/shuokong/GoogleDrive/12co/products/mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/mask_imfit_c18o_pix_2_Tmb.fits']
-lines = ['/Users/shuokong/GoogleDrive/12co/products/convol32_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/convol32_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/convol32_mask_imfit_c18o_pix_2_Tmb.fits'] # convol32 to match GAS survey
-#lines = ['/Users/shuokong/GoogleDrive/Alyssa/nostokes_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/Alyssa/regrid_12co_specsmooth_0p25_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/Alyssa/regrid_12co_specsmooth_0p25_mask_imfit_c18o_pix_2_Tmb.fits']
+#lines = ['/Users/shuokong/GoogleDrive/12co/products/convol32_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/convol32_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/convol32_mask_imfit_c18o_pix_2_Tmb.fits'] # convol32 to match GAS survey
+lines = ['/Users/shuokong/GoogleDrive/12co/products/convol32_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/convol32_specsmooth_0p25_convol_12co_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/convol32_specsmooth_0p25_mask_imfit_c18o_pix_2_Tmb.fits'] # Alyssa cubes convolved to 32"
 linebeams = []
 linedata = []
 linerms = []
@@ -101,8 +101,12 @@ for j in range(len(lines)):
     header = hdulist[0].header
     del header['HISTORY']
     w = wcs.WCS(header)
-    scidata = hdulist[0].data[0,:,:,:] # remove stokes, usually index order: v, dec, ra
-    #scidata = hdulist[0].data[:,:,:] # usually index order: v, dec, ra
+    if j == 0:
+        scidata = hdulist[0].data[0,:,:,:] # remove stokes, usually index order: v, dec, ra
+        pixcoord = w.all_world2pix(worldcoord4,1) # FITS standard uses 1
+    else:
+        scidata = hdulist[0].data[:,:,:] # usually index order: v, dec, ra
+        pixcoord = w.all_world2pix(worldcoord3,1) # FITS standard uses 1
     n1,n2,n3 = scidata.shape
     linedata.append(scidata) 
     bmaj = header['BMAJ']*3600. # convert to arcsec
@@ -119,7 +123,6 @@ for j in range(len(lines)):
     #freq = linefreq[j]
     #jkfac = ts.jkelli(bmaj,bmin,freq)
     #linejkfac.append(jkfac) 
-    pixcoord = w.all_world2pix(worldcoord,1) # FITS standard uses 1
     xx = pixcoord[:,0]
     yy = pixcoord[:,1]
     linexx.append(xx)
@@ -128,8 +131,10 @@ for j in range(len(lines)):
 print 'finish getting line cube metadata'
 #linebeams = [[10.010999813688, 8.091999962928, -12.8900003433], [7.620999868944001, 6.155000813304, 9.93999958038], [10.499000083668, 7.742001023136, -0.40000000596]]
 #linerms = [1.1954995, 1.093392, 0.7671435]
-linebeams = [[32.00000412762, 32.000000774868, -81.7325820923], [32.00000412762, 32.000000774868, 15.3498620987], [32.00000412762, 31.999997422116, 89.7622070312]] # convol32 to match GAS survey
-linerms = [0.49438724, 0.19888465, 0.2835226] # convol32 to match GAS survey
+#linebeams = [[32.00000412762, 32.000000774868, -81.7325820923], [32.00000412762, 32.000000774868, 15.3498620987], [32.00000412762, 31.999997422116, 89.7622070312]] # convol32 to match GAS survey
+#linerms = [0.49438724, 0.19888465, 0.2835226] # convol32 to match GAS survey
+linebeams = [[32.00000412762, 32.000000774868, -81.7325820923], [32.000000774868, 31.999997422116, 77.4425811768], [32.00000412762, 31.999997422116, 89.7622070312]]
+linerms = [0.49438724, 0.11525758, 0.16264242]
 print 'linebeams',linebeams
 print 'linerms',linerms
 #sys.exit()
@@ -530,8 +535,8 @@ for cc in range(cols):
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
     #pdfname='corespectra/Kirk/single_convol32_averspec_Kirk_core'+str(cc+1)+'.pdf'
-    pdfname='corespectra/Kirk/convol32_averspec_Kirk_core'+str(cc+1)+'.pdf'
-    #pdfname='corespectra/Kirk/averspec_all0p25channel_core'+str(cc+1)+'.pdf'
+    #pdfname='corespectra/Kirk/convol32_averspec_Kirk_core'+str(cc+1)+'.pdf'
+    pdfname='corespectra/Kirk/convol32_averspec_all0p25channel_core'+str(cc+1)+'.pdf'
     datafiles = {}
     #print 'x,y',x,y
     ccnh3xx = int(nh3xx[cc])
@@ -706,9 +711,9 @@ for cc in range(cols):
     #os.system('open '+pdfname)
     #os.system('cp '+pdfname+os.path.expandvars(' ${DROPATH}/highres'))
 savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0],nh3evelocities[0],nh3tkin[0],coregaus_x0[1],coregaus_ex0[1],coregaus_sigma[1],coregaus_esigma[1],coregaus_x0[2],coregaus_ex0[2],coregaus_sigma[2],coregaus_esigma[2]),axis=1)
-np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
+#np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
 #np.savetxt('single_convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
-#np.savetxt('Kirkcores_all0p25channel_peak_velocities.txt',savetxtarr,fmt='%3d %15.5f %15.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
+np.savetxt('convol32_Kirkcores_all0p25channel_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
 
 
 
