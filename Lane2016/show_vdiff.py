@@ -47,8 +47,8 @@ usemom1vel = 0
 usegausvel = 0
 massvel = 0
 massmom1 = 0
-tkinhist = 0
-gaussigmahist = 1
+tkinhist = 1
+gaussigmahist = 0
 
 if usepeakvel == 1:
     diffvelocities = [nh3velocities-corevelocities12CO,nh3velocities-corevelocities13CO,nh3velocities-corevelocitiesC18O]
@@ -647,8 +647,8 @@ if gaussigmahist == 1:
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
                 #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
             ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
-            if j == 0:
-                ax.set_title('Gauss')
+            #if j == 0:
+            #    ax.set_title('Gauss')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
             #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
