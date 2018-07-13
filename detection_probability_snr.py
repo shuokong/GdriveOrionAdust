@@ -113,11 +113,7 @@ def powerlawfit(xdata,ydata,yerr,pinit): # xdata,ydata,yerr n-element arrays, pi
      
     return index,indexErr,amp,ampErr 
 
-print sys.argv
-snr = int(sys.argv[1])
-scale = sys.argv[2]
-panel = sys.argv[3]
-print snr, scale
+scale = 'lin'
 
 def getbindata(ffalma,ffmirex,mirexfac,contrms,snr):
     hdu_alma = pyfits.open(ffalma)[0] 
@@ -160,22 +156,27 @@ ax=p.add_subplot(111)
 #plt.xlim(0,150)
 ## linear scale
 if scale == 'lin':
-    ffalma = 'Lane_on_Stefan_header.fits'
+    #ffalma = 'Lane_on_Stefan_header.fits'
+    ffalma = 'Lane_on_Stefan_header_CASA.fits'
     ffmirex = 'emap_Orion_A_bw1.0.fits'
     mirexfac = 1.67e22/4.27e23
-    contrms = 4.69e-4 # from Kirk paper table
+    #contrms = 4.69e-4 # from Kirk paper table
+    contrms = 10.e-3
+    snr = 142.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
-    plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',capthick=1.5,zorder=2)
+    plt.errorbar(x,y,yerr=yerror,fmt='b.',ecolor='b',capthick=1.5,zorder=2,label=r'Orion A')
     ffalma = 'rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
     ffmirex = 'wadiao_mirex_on_alma_header_uvtaper.fits'
     mirexfac = 1.
     contrms = 2.e-4
+    snr = 3.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
-    plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',capthick=1.5,zorder=3,alpha=0.5)
+    plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',capthick=1.5,zorder=3,alpha=0.5,label=r'IRDC G28.37')
     plt.ylim(-0.1,1.1)
     plt.xlim(0,0.8)
-    ax.text(0.05, 0.95,panel+r'~~~$\rm SNR\geq'+str(snr)+'$',horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
-    pdfname = 'dpf_snr'+str(snr)+'.pdf'
+    ax.legend(frameon=False,labelspacing=0.1,loc=4,fontsize=12)
+    #ax.text(0.05, 0.95,panel+r'~~~$\rm SNR\geq'+str(snr)+'$',horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
+    pdfname = 'dpf_Orion_G28.pdf'
 ## logscale
 if scale == 'log':
     fitindleft = int(sys.argv[4])

@@ -2,13 +2,17 @@ import pyfits
 import numpy as np
 
 templatehdulist = pyfits.open('OrionA_850_auto_mos_clip.fits')
-templatedata = templatehdulist[0].data[0,:,:]*26.8 # pixels per 14.6" beam
+#templatehdulist = pyfits.open('OrionA_850_auto_mos_clip_smooth60.fits')
+#templatedata = templatehdulist[0].data[0,:,:]*26.8 # pixels per 14.6" beam
+templatedata = templatehdulist[0].data[0,:,:]
 #templatedata[np.isnan(templatedata)] = 0 # this is necessary for miriad convol, since convol does not handle well nan
 templatehdulist[0].header['NAXIS'] = 2
-templatehdulist[0].header['BMAJ'] = 14.6/3600.
-templatehdulist[0].header['BMIN'] = 14.6/3600.
-templatehdulist[0].header['BPA'] = 0
-templatehdulist[0].header['BUNIT'] = 'JY/BEAM'
+#templatehdulist[0].header['BMAJ'] = 14.6/3600.
+#templatehdulist[0].header['BMIN'] = 14.6/3600.
+#templatehdulist[0].header['BMAJ'] = 60./3600.
+#templatehdulist[0].header['BMIN'] = 60./3600.
+#templatehdulist[0].header['BPA'] = 0
+#templatehdulist[0].header['BUNIT'] = 'JY/BEAM'
 del templatehdulist[0].header['COMMENT']
 del templatehdulist[0].header['']
 del templatehdulist[0].header['HISTORY']
@@ -18,6 +22,7 @@ for kk in templatehdulist[0].header.keys():
         del templatehdulist[0].header[kk]
 #del templatehdulist[0].header['LBOUND*']
 pyfits.writeto('nofreq_OrionA_850_auto_mos_clip.fits',templatedata,templatehdulist[0].header,output_verify='exception',clobber=True,checksum=False)
+#pyfits.writeto('nofreq_OrionA_850_auto_mos_clip_smooth60.fits',templatedata,templatehdulist[0].header,output_verify='exception',clobber=True,checksum=False)
 
 #templatehdulist = pyfits.open('OrionA_450_auto_mos_clip.fits')
 #templatedata = templatehdulist[0].data[0,:,:]
