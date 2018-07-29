@@ -1,4 +1,3 @@
-import math
 import sys
 import os
 from scipy.optimize import curve_fit
@@ -73,8 +72,4 @@ north_sigma_virial = (6.67e-8*north_mass/north_filength/2.)**0.5/1.e5
 print 'north_sigma_virial',north_sigma_virial
 south_sigma_virial = (6.67e-8*south_mass/south_filength/2.)**0.5/1.e5
 print 'south_sigma_virial',south_sigma_virial
-
-
-topcluster_vdiffgauss = [nh3velocities[nn] for nn,ii in enumerate(corenames) if north_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1]
-botcluster_vdiffgauss = [nh3velocities[nn] for nn,ii in enumerate(corenames) if south_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1]
 

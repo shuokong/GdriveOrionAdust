@@ -165,6 +165,7 @@ if scale == 'lin':
     snr = 142.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
     plt.errorbar(x,y,yerr=yerror,fmt='b.',ecolor='b',capthick=1.5,zorder=2,label=r'Orion A')
+    # alma in K18
     ffalma = 'rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
     ffmirex = 'wadiao_mirex_on_alma_header_uvtaper.fits'
     mirexfac = 1.
@@ -172,6 +173,14 @@ if scale == 'lin':
     snr = 3.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
     plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',capthick=1.5,zorder=3,alpha=0.5,label=r'IRDC G28.37')
+    # smooth4p8 alma from K18
+    ffalma = 'convol4p8_rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
+    ffmirex = 'smooth4p8_wadiao_mirex_on_alma_header_uvtaper.fits'
+    mirexfac = 1.
+    contrms = 2.e-4*(4.8/2.)**2
+    snr = 3.
+    x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
+    plt.errorbar(x,y,yerr=yerror,fmt='r.',ecolor='r',capthick=1.5,zorder=3,alpha=0.5,label=r'IRDC G28.37 smoothed')
     plt.ylim(-0.1,1.1)
     plt.xlim(0,0.8)
     ax.legend(frameon=False,labelspacing=0.1,loc=4,fontsize=12)
@@ -206,5 +215,5 @@ os.system('rm '+pdfname)
 plt.savefig(pdfname)
 os.system('open '+pdfname)
 plt.close(p)
-#os.system('cp '+pdfname+os.path.expandvars(' ${DROPATH}/cloudc1'))
+os.system('cp '+pdfname+os.path.expandvars(' /Users/shuokong/GoogleDrive/imagesSFE/'))
 

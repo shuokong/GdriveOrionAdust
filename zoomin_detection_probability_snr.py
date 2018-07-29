@@ -156,6 +156,64 @@ def coremass(S850,kappa=0.012,Td=15.,D=400.):
     """S850 in Jy, kappa in cm2 g-1, Td in K, D in pc"""
     return 1.3*S850*(kappa/0.012)*(np.exp(17./Td)-1.)*(D/450.)**2
 
+def beampixel(bmaj,bmin,bpa,corecenter,cellsize,beamfraction=1.): # bmaj, bmin, cellsize in arcsec, corecenter = [pixelx, pixely], input bpa in degree
+    pixellist = []
+    rotation = float(bpa)/180.*np.pi
+    cosa = np.cos(rotation)
+    sina = np.sin(rotation)
+    squareradius = int(bmaj/cellsize) # define a search domain first, make it twice bmaj
+    xcenter,ycenter = corecenter
+    semimajor = bmaj/2./cellsize*beamfraction**0.5
+    semiminor = bmin/2./cellsize*beamfraction**0.5
+    for x in range(xcenter-squareradius,xcenter+squareradius+1):
+        for y in range(ycenter-squareradius,ycenter+squareradius+1):
+            if ((x-xcenter)*cosa+(y-ycenter)*sina)**2/semimajor**2 + ((x-xcenter)*sina-(y-ycenter)*cosa)**2/semiminor**2 < 1.:
+                pixellist.append((x,y))
+    return pixellist
+
+make_Lanecores_on_Stefan_header = 0 #
+if make_Lanecores_on_Stefan_header == 1:
+    corenames, xw, yw, peak850, flux850, cmaj, cmin, cpa = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/Getsources_cores_degree.txt',usecols=(0,1,2,3,4,5,6,7),unpack=True)
+    print 'max(cmaj)',max(cmaj)
+    print 'max(cmin)',max(cmin)
+    print 'sum(cmaj>30)',sum(cmaj>30)
+    print 'sum(cmin>30)',sum(cmin>30)
+    print 'sum(cmaj>60)',sum(cmaj>60)
+    print 'sum(cmin>60)',sum(cmin>60)
+    cc = SkyCoord(xw, yw, "icrs", unit="deg")
+    
+    ffjcmt = 'Lane2016/nofreq_OrionA_850_auto_mos_clip.fits' # only for core pixels
+    hdu_jcmt = pyfits.open(ffjcmt)
+    header = hdu_jcmt[0].header
+    cellsize = abs(header['CDELT1']*header['CDELT2'])**0.5*3600.
+    ww = wcs.WCS(header)
+    #scidata = hdu_jcmt[0].data
+    #scidata *= 0
+    pixcoordx,pixcoordy = cc.to_pixel(ww)
+    xx = pixcoordx.astype(int)
+    yy = pixcoordy.astype(int)
+    #scidata[yy,xx] = 1
+    ffemap = 'Lane_on_Stefan_header.fits'
+    hdu_emap = pyfits.open(ffemap)
+    header_emap = hdu_emap[0].header
+    ww_emap = wcs.WCS(header_emap)
+    emapdata = hdu_emap[0].data
+    emapdata *= 0
+    for ccc,vvv in enumerate(corenames):
+        pixlist = beampixel(cmaj[ccc],cmin[ccc],cpa[ccc],[xx[ccc],yy[ccc]],cellsize)
+        pixlistarr = np.array(pixlist)
+        sc_jcmt = SkyCoord.from_pixel(pixlistarr[:,0], pixlistarr[:,1],ww)
+        pixcoordx,pixcoordy = sc_jcmt.galactic.to_pixel(ww_emap)
+        #scidata[pixlistarr[:,1],pixlistarr[:,0]] = 1
+        xxx = np.around(pixcoordx).astype(int)
+        yyy = np.around(pixcoordy).astype(int)
+        emapdata[yyy,xxx] = 1
+    #hdu_jcmt.writeto('Lanecores_nofreq_OrionA_850_auto_mos_clip.fits',clobber=True)
+    hdu_emap.writeto('Lanecores_on_Stefan_header.fits',clobber=True)
+    hdu_jcmt.close()
+    hdu_emap.close()
+    sys.exit()
+
 corenames, xw, yw, peak850, flux850, cmaj, cmin, cpa = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/Getsources_cores_degree.txt',usecols=(0,1,2,3,4,5,6,7),unpack=True)
 print 'max(cmaj)',max(cmaj)
 print 'max(cmin)',max(cmin)
@@ -163,7 +221,7 @@ print 'sum(cmaj>30)',sum(cmaj>30)
 print 'sum(cmin>30)',sum(cmin>30)
 print 'sum(cmaj>60)',sum(cmaj>60)
 print 'sum(cmin>60)',sum(cmin>60)
-c = SkyCoord(xw, yw, "icrs", unit="deg")
+#c = SkyCoord(xw, yw, "icrs", unit="deg")
 
 mass850 = coremass(flux850)
 print 'type(mass850)',type(mass850)
@@ -185,10 +243,15 @@ print 'jcmt SNR>5 mass fraction',np.nansum(hdu_jcmt.data[hdu_jcmt.data>4.69e-4*5
 header = hdu_nicest.header
 w = wcs.WCS(header)
 scidata = hdu_nicest.data
-pixcoordx,pixcoordy = c.galactic.to_pixel(w)
-xx = pixcoordx.astype(int)
-yy = pixcoordy.astype(int)
-coreak = scidata[yy,xx]
+#pixcoordx,pixcoordy = c.galactic.to_pixel(w)
+#xx = pixcoordx.astype(int)
+#yy = pixcoordy.astype(int)
+#coreak = scidata[yy,xx]
+ff_lanecores = 'Lanecores_on_Stefan_header.fits'
+hdu_lanecores = pyfits.open(ff_lanecores)[0]
+scidata_lanecores = hdu_lanecores.data
+lanecores_detection = (scidata_lanecores>0)
+coreak = scidata[lanecores_detection]
 mirexfac = 9.
 coreav = coreak * mirexfac
 mapav = scidata.flatten() * mirexfac
@@ -265,5 +328,5 @@ os.system('rm '+pdfname)
 plt.savefig(pdfname,bbox_inches='tight')
 os.system('open '+pdfname)
 plt.close(p)
-#os.system('cp '+pdfname+os.path.expandvars(' ${DROPATH}/cloudc1'))
+os.system('cp '+pdfname+os.path.expandvars(' /Users/shuokong/GoogleDrive/imagesSFE/'))
 
