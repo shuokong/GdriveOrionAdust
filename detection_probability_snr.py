@@ -117,10 +117,7 @@ scale = 'lin'
 
 def getbindata(ffalma,ffmirex,mirexfac,contrms,snr):
     hdu_alma = pyfits.open(ffalma)[0] 
-    if 'emap' in ffmirex:
-        hdu_mirex = pyfits.open(ffmirex)[1]
-    else:
-        hdu_mirex = pyfits.open(ffmirex)[0]
+    hdu_mirex = pyfits.open(ffmirex)[0]
     alma_data = hdu_alma.data
     mirex_data = hdu_mirex.data*mirexfac # in g cm-2
     print alma_data.shape
@@ -156,9 +153,8 @@ ax=p.add_subplot(111)
 #plt.xlim(0,150)
 ## linear scale
 if scale == 'lin':
-    #ffalma = 'Lane_on_Stefan_header.fits'
-    ffalma = 'Lane_on_Stefan_header_CASA.fits'
-    ffmirex = 'emap_Orion_A_bw1.0.fits'
+    ffalma = 'OrionKLellipse_Lane_on_Stefan_header_CASA.fits'
+    ffmirex = 'OrionKLellipse_mask_emap_Orion_A_bw1.0.fits'
     mirexfac = 1.67e22/4.27e23
     #contrms = 4.69e-4 # from Kirk paper table
     contrms = 10.e-3

@@ -225,20 +225,21 @@ print 'sum(cmin>60)',sum(cmin>60)
 
 mass850 = coremass(flux850)
 print 'type(mass850)',type(mass850)
-print 'len(mass850) in Msun',len(mass850)
-print 'np.nansum(mass850) in Msun',np.nansum(mass850) # need to scale down by a factor of 0.8 because Lane uses 450 pc
+print 'len(mass850)',len(mass850)
+print 'np.nansum(mass850) in Msun',np.nansum(mass850) # scaled down by a factor of 0.8 because Lane uses 450 pc
 
 #ffalma = 'Lane_on_Stefan_header.fits'
 ffalma = 'Lane_on_Stefan_header_CASA.fits'
-ffmirex = 'mask_emap_Orion_A_bw1.0.fits'
+ffmirex = 'mask_emap_Orion_A_bw1.0.fits' # mass calculation not applying the Orion KL mask
 hdu_jcmt = pyfits.open('Lane2016/OrionA_850_auto_mos_clip.fits')[0]
 print 'np.nansum(hdu_jcmt.data[hdu_jcmt.data>4.69e-4*5.])',np.nansum(hdu_jcmt.data[hdu_jcmt.data>4.69e-4*5.])
 print 'jcmt SNR>5 flux/np.nansum(flux850)',np.nansum(hdu_jcmt.data[hdu_jcmt.data>4.69e-4*5.])/np.nansum(flux850)
 hdu_nicest = pyfits.open(ffmirex)[0]
-print 'np.nansum(hdu_nicest.data)',np.nansum(hdu_nicest.data)
-print 'np.nansum(hdu_nicest.data) to mass in Msun',np.nansum(hdu_nicest.data)*1.67e22/4.27e23*(30.*400.*1.5e13)**2/2.e33
-print 'continuum mass fraction',np.nansum(mass850)/(np.nansum(hdu_nicest.data)*1.67e22/4.27e23*(30.*400.*1.5e13)**2/2.e33)
-print 'jcmt SNR>5 mass fraction',np.nansum(hdu_jcmt.data[hdu_jcmt.data>4.69e-4*5.])/np.nansum(flux850)*np.nansum(mass850)/(np.nansum(hdu_nicest.data)*1.67e22/4.27e23*(30.*400.*1.5e13)**2/2.e33)
+#print 'np.nansum(hdu_nicest.data)',np.nansum(hdu_nicest.data)
+meingastdata = hdu_nicest.data[hdu_nicest.data>0]
+print 'np.nansum(meingastdata) to mass in Msun',np.nansum(meingastdata)*1.67e22/4.27e23*(30.*400.*1.5e13)**2/2.e33
+print 'Lane core mass fraction',np.nansum(mass850)/(np.nansum(meingastdata)*1.67e22/4.27e23*(30.*400.*1.5e13)**2/2.e33)
+print 'jcmt SNR>5 mass fraction',np.nansum(hdu_jcmt.data[hdu_jcmt.data>4.69e-4*5.])/np.nansum(flux850)*np.nansum(mass850)/(np.nansum(meingastdata)*1.67e22/4.27e23*(30.*400.*1.5e13)**2/2.e33)
 #sys.exit()
 header = hdu_nicest.header
 w = wcs.WCS(header)
@@ -280,6 +281,9 @@ contrms = 10.e-3
 p=plt.figure(figsize=(7,12))
 plt.subplots_adjust(top=0.98,bottom=0.1,left=0.12,right=0.96,hspace=0.1)
 pdfname = 'dpf_OrionA.pdf'
+
+ffalma = 'OrionKLellipse_Lane_on_Stefan_header_CASA.fits'
+ffmirex = 'OrionKLellipse_mask_emap_Orion_A_bw1.0.fits' # DPF plot applying the Orion KL mask
 
 ax=p.add_subplot(211)
 avmin,avmax = (0,60)
