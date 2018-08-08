@@ -27,6 +27,7 @@ if peak == 1:
     ff.show_colorscale(cmap='gray_r', vmin=0, vmax=maxcolor, stretch='sqrt')
     ff.show_regions('OrionKLellipse.reg')
     ff.show_contour(hdu2, levels=0.01*np.concatenate((np.array([5,100,200]),np.arange(300,30000,600))), colors='yellow', linewidths=0.1)
+    ff.show_contour(hdu1, levels=[20./9.], colors='blue', linewidths=0.1)
     ff.add_colorbar() 
     ff.colorbar.set_font(size=12)
     ff.colorbar.set_pad(0.5)
