@@ -271,8 +271,8 @@ if usegausvel == 1:
             print 'np.nanmean(coreveldiff)',np.nanmean(coreveldiff)
             print 'np.nanstd(coreveldiff)',np.nanstd(coreveldiff[abs(coreveldiff)<2])
             print 'scipy.stats.norm.fit(coreveldiff)',norm.fit(coreveldiff[abs(coreveldiff)<2])
-            ss = raw_input()
             print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
+            ss = raw_input()
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
             print 'bin size',bin_edges[1]-bin_edges[0]
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.

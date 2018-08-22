@@ -155,12 +155,20 @@ ax=p.add_subplot(111)
 if scale == 'lin':
     ffalma = 'OrionKLellipse_Lane_on_Stefan_header_CASA.fits'
     ffmirex = 'OrionKLellipse_mask_emap_Orion_A_bw1.0.fits'
-    mirexfac = 1.67e22/4.27e23
+    mirexfac = 8.93/214.
     #contrms = 4.69e-4 # from Kirk paper table
     contrms = 10.e-3
     snr = 142.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
-    plt.errorbar(x,y,yerr=yerror,fmt='b.',ecolor='b',capthick=1.5,zorder=2,label=r'Orion A')
+    plt.errorbar(x,y,yerr=yerror,fmt='b.',ecolor='b',markersize=10,capthick=1.5,zorder=2,label=r'Orion A 15 K')
+    # use 20 K for Kirk17 cores
+    ffalma = 'OrionKLellipse_Lane_on_Stefan_header_CASA.fits'
+    ffmirex = 'OrionKLellipse_mask_emap_Orion_A_bw1.0.fits'
+    mirexfac = 8.93/214.
+    contrms = 10.e-3
+    snr = 142./0.636
+    x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
+    plt.errorbar(x,y,yerr=yerror,fmt='c.',ecolor='c',capthick=1.5,zorder=2,label=r'Orion A 20 K')
     # alma in K18
     ffalma = 'rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
     ffmirex = 'wadiao_mirex_on_alma_header_uvtaper.fits'
@@ -168,7 +176,7 @@ if scale == 'lin':
     contrms = 2.e-4
     snr = 3.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
-    plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',capthick=1.5,zorder=3,alpha=0.5,label=r'IRDC G28.37')
+    plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',markersize=10,capthick=1.5,zorder=3,alpha=0.5,label=r'IRDC G28.37')
     # smooth4p8 alma from K18
     ffalma = 'convol4p8_rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
     ffmirex = 'smooth4p8_wadiao_mirex_on_alma_header_uvtaper.fits'

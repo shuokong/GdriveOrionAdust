@@ -253,7 +253,7 @@ hdu_lanecores = pyfits.open(ff_lanecores)[0]
 scidata_lanecores = hdu_lanecores.data
 lanecores_detection = (scidata_lanecores>0)
 coreak = scidata[lanecores_detection]
-mirexfac = 9.
+mirexfac = 8.93
 coreav = coreak * mirexfac
 mapav = scidata.flatten() * mirexfac
 #print 'coreak[:3]',coreak[:3] # checked in ds9, ok

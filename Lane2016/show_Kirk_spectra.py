@@ -508,12 +508,12 @@ multiGaussDict = {
                   '907':{'13CO':[8,9,10],'C18O':[8]},
                   }
 
-single_components = [str(int(iii)) for iii in corenames if str(int(iii)) not in multiGaussDict.keys()]
-print 'single_components',single_components,'len(single_components)',len(single_components),'len(multiGaussDict.keys())',len(multiGaussDict.keys()),set(single_components).intersection(set(multiGaussDict.keys()))
-outlier = [iii for iii in multiGaussDict.keys() if float(iii) not in corenames]
-print 'outlier',outlier
-sys.exit()
-single_components = [5, 9, 10, 12, 16, 17, 18, 19, 21, 23, 30, 32, 33, 34, 35, 36, 39, 40, 42, 44, 47, 49, 50, 55, 56, 57, 58, 63, 68, 69, 72, 82, 84, 91, 93, 95, 100, 101, 105, 108, 109, 116, 125, 128, 129, 130, 134, 137, 139, 142, 147, 161, 164, 166, 167, 170, 177, 179, 181, 189, 191, 192, 193, 197, 211, 213, 221, 225, 228, 231, 232, 234, 239, 245, 246, 247, 249, 250, 256, 257, 259, 260, 266, 269, 283, 291, 292, 293, 300, 302, 306, 319, 323, 327, 330, 331, 342, 353, 355, 367, 390, 391, 402, 422, 432, 434, 440, 461, 462, 463, 471, 486, 498, 500, 518, 537, 540, 543, 546, 551, 554, 571, 588, 603, 612, 616, 622, 630, 699, 702, 755, 768, 784, 790, 816, 873]
+#single_components = [str(int(iii)) for iii in corenames if str(int(iii)) not in multiGaussDict.keys()]
+#print 'single_components',single_components,'len(single_components)',len(single_components),'len(multiGaussDict.keys())',len(multiGaussDict.keys()),set(single_components).intersection(set(multiGaussDict.keys()))
+#outlier = [iii for iii in multiGaussDict.keys() if float(iii) not in corenames]
+#print 'outlier',outlier
+#sys.exit()
+#single_components = [5, 9, 10, 12, 16, 17, 18, 19, 21, 23, 30, 32, 33, 34, 35, 36, 39, 40, 42, 44, 47, 49, 50, 55, 56, 57, 58, 63, 68, 69, 72, 82, 84, 91, 93, 95, 100, 101, 105, 108, 109, 116, 125, 128, 129, 130, 134, 137, 139, 142, 147, 161, 164, 166, 167, 170, 177, 179, 181, 189, 191, 192, 193, 197, 211, 213, 221, 225, 228, 231, 232, 234, 239, 245, 246, 247, 249, 250, 256, 257, 259, 260, 266, 269, 283, 291, 292, 293, 300, 302, 306, 319, 323, 327, 330, 331, 342, 353, 355, 367, 390, 391, 402, 422, 432, 434, 440, 461, 462, 463, 471, 486, 498, 500, 518, 537, 540, 543, 546, 551, 554, 571, 588, 603, 612, 616, 622, 630, 699, 702, 755, 768, 784, 790, 816, 873]
 
 linenames = [r'$\rm ^{12}CO(1$-$0)$',r'$\rm ^{13}CO(1$-$0)$',r'$\rm C^{18}O(1$-$0)$']
 molnames = ['12CO','13CO','C18O']

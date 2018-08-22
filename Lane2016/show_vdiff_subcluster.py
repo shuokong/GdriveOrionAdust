@@ -2,6 +2,7 @@ import math
 import sys
 import os
 from scipy.optimize import curve_fit
+from scipy.stats import norm
 import numpy as np
 import telescope_sensitivity as ts
 import pyfits
@@ -38,11 +39,21 @@ pixcoord = w.all_world2pix(worldcoord2,1) # FITS standard uses 1
 xx = pixcoord[:,0]
 yy = pixcoord[:,1]
 
-topcluster_13CO_vdiffgauss = [nh3velocities[nn]-coregaus_x0_13CO[nn] for nn,ii in enumerate(corenames) if north_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1 and nn not in removeind]
-botcluster_13CO_vdiffgauss = [nh3velocities[nn]-coregaus_x0_13CO[nn] for nn,ii in enumerate(corenames) if south_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1 and nn not in removeind]
+topcluster_13CO_vdiffgauss = [nh3velocities[nn]-coregaus_x0_13CO[nn] for nn,ii in enumerate(corenames) if north_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1 and nn not in removeind and abs(nh3velocities[nn]-coregaus_x0_13CO[nn]) < 3]
+botcluster_13CO_vdiffgauss = [nh3velocities[nn]-coregaus_x0_13CO[nn] for nn,ii in enumerate(corenames) if south_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1 and nn not in removeind and abs(nh3velocities[nn]-coregaus_x0_13CO[nn]) < 3]
 
-topcluster_C18O_vdiffgauss = [nh3velocities[nn]-coregaus_x0_C18O[nn] for nn,ii in enumerate(corenames) if north_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1 and nn not in removeind]
-botcluster_C18O_vdiffgauss = [nh3velocities[nn]-coregaus_x0_C18O[nn] for nn,ii in enumerate(corenames) if south_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1 and nn not in removeind]
+topcluster_C18O_vdiffgauss = [nh3velocities[nn]-coregaus_x0_C18O[nn] for nn,ii in enumerate(corenames) if north_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1 and nn not in removeind and abs(nh3velocities[nn]-coregaus_x0_C18O[nn]) < 3]
+botcluster_C18O_vdiffgauss = [nh3velocities[nn]-coregaus_x0_C18O[nn] for nn,ii in enumerate(corenames) if south_maskhdu.data[int(yy[nn]),int(xx[nn])] == 1 and nn not in removeind and abs(nh3velocities[nn]-coregaus_x0_C18O[nn]) < 3]
+
+print 'min max topcluster_13CO_vdiffgauss',min(topcluster_13CO_vdiffgauss),max(topcluster_13CO_vdiffgauss)
+print 'min max topcluster_C18O_vdiffgauss',min(topcluster_C18O_vdiffgauss),max(topcluster_C18O_vdiffgauss)
+print 'min max botcluster_13CO_vdiffgauss',min(botcluster_13CO_vdiffgauss),max(botcluster_13CO_vdiffgauss)
+print 'min max botcluster_C18O_vdiffgauss',min(botcluster_C18O_vdiffgauss),max(botcluster_C18O_vdiffgauss)
+print 'scipy.stats.norm.fit(topcluster_13CO_vdiffgauss)',norm.fit(topcluster_13CO_vdiffgauss)
+print 'scipy.stats.norm.fit(topcluster_C18O_vdiffgauss)',norm.fit(topcluster_C18O_vdiffgauss)
+print 'scipy.stats.norm.fit(botcluster_13CO_vdiffgauss)',norm.fit(botcluster_13CO_vdiffgauss)
+print 'scipy.stats.norm.fit(botcluster_C18O_vdiffgauss)',norm.fit(botcluster_C18O_vdiffgauss)
+#sys.exit()
 
 linenames = [r'$\rm ^{12}CO(1$-$0)$',r'$\rm ^{13}CO(1$-$0)$',r'$\rm C^{18}O(1$-$0)$']
 xpanels = 1
@@ -52,8 +63,8 @@ ypanelwidth = 5
 vlow = -3
 vhigh = 3
 
-north = 0
-south = 1
+north = 1
+south = 0
 
 ### north
 if north == 1:

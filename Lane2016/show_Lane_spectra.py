@@ -118,12 +118,12 @@ corenames, xw, yw, peak850, flux850, cmaj, cmin, cpa = np.loadtxt('/Users/shuoko
 #corenames, xw, yw, peak850, flux850, cmaj, cmin, cpa = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/test.txt',usecols=(0,1,2,3,4,5,6,7),unpack=True)
 print 'minimum cmaj',min(cmaj),'minimum cmin',min(cmin)
 print 'maximum cmaj',max(cmaj),'maximum cmin',max(cmin)
-#worldcoord = np.stack((xw,yw,np.zeros_like(xw),np.zeros_like(xw)),axis=1)
-worldcoord = np.stack((xw,yw,np.zeros_like(xw)),axis=1)
+worldcoord = np.stack((xw,yw,np.zeros_like(xw),np.zeros_like(xw)),axis=1)
+#worldcoord = np.stack((xw,yw,np.zeros_like(xw)),axis=1)
 
 cellsize = 2. # voxel size in arcsec
-#lines = ['/Users/shuokong/GoogleDrive/12co/products/mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/mask_imfit_c18o_pix_2_Tmb.fits']
-lines = ['/Users/shuokong/GoogleDrive/Alyssa/nostokes_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/Alyssa/regrid_12co_specsmooth_0p25_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/Alyssa/regrid_12co_specsmooth_0p25_mask_imfit_c18o_pix_2_Tmb.fits']
+lines = ['/Users/shuokong/GoogleDrive/12co/products/mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/mask_imfit_c18o_pix_2_Tmb.fits']
+#lines = ['/Users/shuokong/GoogleDrive/Alyssa/nostokes_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/Alyssa/regrid_12co_specsmooth_0p25_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/Alyssa/regrid_12co_specsmooth_0p25_mask_imfit_c18o_pix_2_Tmb.fits']
 linebeams = []
 linedata = []
 linerms = []
@@ -138,8 +138,8 @@ for j in range(len(lines)):
     header = hdulist[0].header
     del header['HISTORY']
     w = wcs.WCS(header)
-    #scidata = hdulist[0].data[0,:,:,:] # remove stokes, usually index order: v, dec, ra
-    scidata = hdulist[0].data[:,:,:] # usually index order: v, dec, ra
+    scidata = hdulist[0].data[0,:,:,:] # remove stokes, usually index order: v, dec, ra
+    #scidata = hdulist[0].data[:,:,:] # usually index order: v, dec, ra
     n1,n2,n3 = scidata.shape
     linedata.append(scidata) 
     bmaj = header['BMAJ']*3600. # convert to arcsec
@@ -160,10 +160,10 @@ for j in range(len(lines)):
     lineyy.append(yy)
     hdulist.close()
 print 'finish getting line cube metadata'
-#linebeams = [[10.010999813688, 8.091999962928, -12.8900003433], [7.620999868944001, 6.155000813304, 9.93999958038], [10.499000083668, 7.742001023136, -0.40000000596]]
-#linerms = [1.1954995, 1.093392, 0.7671435]
-linebeams = [[10.010999813688, 8.091999962928, -12.8900003433], [10.000000242144, 8.000000193707999, -13.0000019073], [10.499000083668, 7.742001023136, -0.40000000596]]
-linerms = [1.1954995, 0.4386849, 0.44249624]
+linebeams = [[10.010999813688, 8.091999962928, -12.8900003433], [7.620999868944001, 6.155000813304, 9.93999958038], [10.499000083668, 7.742001023136, -0.40000000596]]
+linerms = [1.1954995, 1.093392, 0.7671435]
+#linebeams = [[10.010999813688, 8.091999962928, -12.8900003433], [10.000000242144, 8.000000193707999, -13.0000019073], [10.499000083668, 7.742001023136, -0.40000000596]]
+#linerms = [1.1954995, 0.4386849, 0.44249624]
 print 'linebeams',linebeams
 print 'linerms',linerms
 #sys.exit()
@@ -1488,7 +1488,6 @@ ypanels = len(lines)
 xpanelwidth = 12
 ypanelwidth = 5
 vlow = 1 # if using Alyssa 13CO and C18O cubes, this should not be 0 because the first channel after 0 is empty
-vlow = 0
 vhigh = 16
 cols = len(corenames)
 corevelocities = [[],[],[]]
@@ -1502,19 +1501,22 @@ coregaus_x0 = [[],[],[]]
 coregaus_ex0 = [[],[],[]]
 coregaus_sigma = [[],[],[]]
 coregaus_esigma = [[],[],[]]
-#os.system('rm corespectra/Lane/averspec_Lane_core*.pdf')
+os.system('rm corespectra/Lane/averspec_Lane_core*.pdf')
+os.system('rm corespectra/Lane_datapoints/12CO/Lanecore_core*.txt')
+os.system('rm corespectra/Lane_datapoints/13CO/Lanecore_core*.txt')
+os.system('rm corespectra/Lane_datapoints/C18O/Lanecore_core*.txt')
 #os.system('rm corespectra/Lane/averspec_Lane_core_all0p25channel_core*.pdf')
-os.system('rm corespectra/Lane/single_averspec_Lane_core_all0p25channel_core*.pdf')
-os.system('rm corespectra/Lane_datapoints/12CO/Lanecore_all0p25channel_core*.txt')
-os.system('rm corespectra/Lane_datapoints/13CO/Lanecore_all0p25channel_core*.txt')
-os.system('rm corespectra/Lane_datapoints/C18O/Lanecore_all0p25channel_core*.txt')
+#os.system('rm corespectra/Lane/single_averspec_Lane_core_all0p25channel_core*.pdf')
+#os.system('rm corespectra/Lane_datapoints/12CO/Lanecore_all0p25channel_core*.txt')
+#os.system('rm corespectra/Lane_datapoints/13CO/Lanecore_all0p25channel_core*.txt')
+#os.system('rm corespectra/Lane_datapoints/C18O/Lanecore_all0p25channel_core*.txt')
 for cc in range(cols):
     #if str(int(corenames[cc])) not in multiGaussDict.keys(): continue
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
-    plt.subplots_adjust(wspace=0.001,hspace=0.001)
-    pdfname='corespectra/Lane/single_averspec_Lane_core_all0p25channel_core'+str(cc+1)+'.pdf'
-    #pdfname='corespectra/Lane/averspec_Lane_core'+str(cc+1)+'.pdf'
-    #pdfname='corespectra/Lane/averspec_Lane_core_all0p25channel_core'+str(cc+1)+'.pdf'
+    #plt.subplots_adjust(wspace=0.001,hspace=0.001)
+    #pdfname='corespectra/Lane/single_averspec_Lane_core_all0p25channel_core'+str(int(corenames[cc]))+'.pdf'
+    pdfname='corespectra/Lane/averspec_Lane_core'+str(int(corenames[cc]))+'.pdf'
+    #pdfname='corespectra/Lane/averspec_Lane_core_all0p25channel_core'+str(int(corenames[cc]))+'.pdf'
     datafiles = {}
     #print 'x,y',x,y
     ccnh3xx = int(nh3xx[cc])
@@ -1545,6 +1547,7 @@ for cc in range(cols):
             corei = np.array(pixlist) 
             annulus = np.array(annuluslist) 
             data = linedata[panel-1] 
+            ### see if core pixels out of bound
             if np.any(corei[:,0]<0) or np.any(corei[:,0]>=len(data[0,0,:])) or np.any(corei[:,1]<0) or np.any(corei[:,1]>=len(data[0,:,0])) or np.any(annulus[:,0]<0) or np.any(annulus[:,0]>=len(data[0,0,:])) or np.any(annulus[:,1]<0) or np.any(annulus[:,1]>=len(data[0,:,0])):
                 corevelocities[panel-1].append(-100)
                 coresnr[panel-1].append(0)
@@ -1559,6 +1562,7 @@ for cc in range(cols):
             temp = data[:,corei[:,1],corei[:,0]] 
             annulus_temp = data[:,annulus[:,1],annulus[:,0]] 
             rawspectrum = np.nanmean(temp,axis=(1))
+            ### see if nan spectrum
             if sum(np.isnan(rawspectrum)) == len(rawspectrum):
                 corevelocities[panel-1].append(-100)
                 coresnr[panel-1].append(0)
@@ -1578,47 +1582,56 @@ for cc in range(cols):
             annulus_intens = annulus_spectrum[subvel]
             velocity = rawvelocity[subvel]
             coresavetxtarr = np.stack((velocity,rawintens),axis=1)
-            np.savetxt('corespectra/Lane_datapoints/'+molnames[j]+'/Lanecore_all0p25channel_core'+str(int(corenames[cc]))+'_'+molnames[j]+'.txt',coresavetxtarr,fmt='%7.2f %10.2e')
+            #np.savetxt('corespectra/Lane_datapoints/'+molnames[j]+'/Lanecore_all0p25channel_core'+str(int(corenames[cc]))+'_'+molnames[j]+'.txt',coresavetxtarr,fmt='%7.2f %10.2e')
+            np.savetxt('corespectra/Lane_datapoints/'+molnames[j]+'/Lanecore_core'+str(int(corenames[cc]))+'_'+molnames[j]+'.txt',coresavetxtarr,fmt='%7.2f %10.2e')
             coremom0 = mom0(cdelt3/1.e3,rawintens)
             coremom0s[panel-1].append(coremom0)
+            havefit = 0
+            velocityguess = []
             if j > 0:
                 if str(int(corenames[cc])) in multiGaussDict.keys():
-                    guess = []
-                    for ii in multiGaussDict[str(int(corenames[cc]))][molnames[j]]:
-                        guess += [ii,0.2,0.2]
-                    popt, pcov = curve_fit(multigaus, velocity, rawintens, p0=guess, maxfev=100000)
-                    perr = np.sqrt(np.diag(pcov))
-                    component_number = len(multiGaussDict[str(int(corenames[cc]))][molnames[j]])
-                    component_velocities = [abs(popt[ii*3]-ccvlsr[0]) for ii in range(component_number)]
-                    closest_index = np.argmin(component_velocities)
-                    closest_velocity = popt[closest_index*3]
-                    closest_evelocity = perr[closest_index*3]
-                    closest_sigma = popt[closest_index*3+2]
-                    closest_esigma = perr[closest_index*3+2]
-                    coregaus_x0[panel-1].append(closest_velocity)
-                    coregaus_ex0[panel-1].append(closest_evelocity)
-                    coregaus_sigma[panel-1].append(closest_sigma)
-                    coregaus_esigma[panel-1].append(closest_esigma)
-                else:
-                    guess = []
-                    for ii in singleGaussDict[str(cc+1)][molnames[j]]:
-                        guess += [ii,0.5,0.5]
-                    try:
+                    if 0 not in multiGaussDict[str(int(corenames[cc]))][molnames[j]]:
+                        havefit = 1
+                        guess = []
+                        for ii in multiGaussDict[str(int(corenames[cc]))][molnames[j]]:
+                            guess += [ii,0.2,0.2]
+                            velocityguess += [ii]
                         popt, pcov = curve_fit(multigaus, velocity, rawintens, p0=guess, maxfev=100000)
                         perr = np.sqrt(np.diag(pcov))
-                        closest_velocity = popt[0]
-                        closest_evelocity = perr[0]
-                        closest_sigma = popt[2]
-                        closest_esigma = perr[2]
+                        component_number = len(multiGaussDict[str(int(corenames[cc]))][molnames[j]])
+                        component_velocities = [abs(popt[ii*3]-ccvlsr[0]) for ii in range(component_number)]
+                        closest_index = np.argmin(component_velocities)
+                        closest_velocity = popt[closest_index*3]
+                        closest_evelocity = perr[closest_index*3]
+                        closest_sigma = popt[closest_index*3+2]
+                        closest_esigma = perr[closest_index*3+2]
                         coregaus_x0[panel-1].append(closest_velocity)
                         coregaus_ex0[panel-1].append(closest_evelocity)
                         coregaus_sigma[panel-1].append(closest_sigma)
                         coregaus_esigma[panel-1].append(closest_esigma)
-                    except:
-                        coregaus_x0[panel-1].append(-100)
-                        coregaus_ex0[panel-1].append(-100)
-                        coregaus_sigma[panel-1].append(-100)
-                        coregaus_esigma[panel-1].append(-100)
+                else:
+                    if 0 not in singleGaussDict[str(int(corenames[cc]))][molnames[j]]:
+                        havefit = 1
+                        guess = []
+                        for ii in singleGaussDict[str(int(corenames[cc]))][molnames[j]]:
+                            guess += [ii,0.5,0.5]
+                            velocityguess += [ii]
+                        try:
+                            popt, pcov = curve_fit(multigaus, velocity, rawintens, p0=guess, maxfev=100000)
+                            perr = np.sqrt(np.diag(pcov))
+                            closest_velocity = popt[0]
+                            closest_evelocity = perr[0]
+                            closest_sigma = popt[2]
+                            closest_esigma = perr[2]
+                            coregaus_x0[panel-1].append(closest_velocity)
+                            coregaus_ex0[panel-1].append(closest_evelocity)
+                            coregaus_sigma[panel-1].append(closest_sigma)
+                            coregaus_esigma[panel-1].append(closest_esigma)
+                        except:
+                            coregaus_x0[panel-1].append(-100)
+                            coregaus_ex0[panel-1].append(-100)
+                            coregaus_sigma[panel-1].append(-100)
+                            coregaus_esigma[panel-1].append(-100)
             datarms = linerms[panel-1]
             #threshold = datarms*5.
             threshold = datarms / (cmaj[cc]*cmin[cc]/bmaj/bmin)**0.5 * 5.
@@ -1647,14 +1660,14 @@ for cc in range(cols):
             ymax = 0
             if np.nanmin(rawintens) < ymin: ymin = np.nanmin(rawintens)
             if np.nanmax(rawintens) > ymax: ymax = np.nanmax(rawintens)
-            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'core','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':velocity,'y':annulus_intens,'peakvelocity':-100,'peaksnr':0,'legends':'annulus','linestyles':'k:','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':[ccvlsr[0],coremom1],'vertlinestyles':[ccvlsrstyle[0],'dotted'],'vertlinecolors':['b','b'],'vertlinewidths':[4,2],'vertlinelengths':[0.5,0.6]}
-            if j > 0:
-                datafiles['panel'+str(panel)]['lines']['3']={'x':velocity,'y':multigaus(velocity,*popt),'legends':'core fit','linestyles':'g-','drawsty':'default'}
-                datafiles['panel'+str(panel)]['vertlines'].append(closest_velocity)
-                datafiles['panel'+str(panel)]['vertlinestyles'].append('dashed')
-                datafiles['panel'+str(panel)]['vertlinecolors'].append('g')
-                datafiles['panel'+str(panel)]['vertlinewidths'].append(4)
-                datafiles['panel'+str(panel)]['vertlinelengths'].append(0.7)
+            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'core','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':velocity,'y':annulus_intens,'peakvelocity':-100,'peaksnr':0,'legends':'annulus','linestyles':'k:','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':[ccvlsr[0],coremom1]+velocityguess,'vertlinestyles':[ccvlsrstyle[0],'dotted']+['solid' for ii in velocityguess],'vertlinecolors':['b','b']+['g' for ii in velocityguess],'vertlinewidths':[4,2]+[1 for ii in velocityguess],'vertlinelengths':[0.5,0.6]+[0.3 for ii in velocityguess]}
+            if j > 0 and havefit == 1:
+                datafiles['panel'+str(panel)]['lines']['3']={'x':velocity,'y':multigaus(velocity,*popt),'legends':'Guess: '+str(velocityguess),'linestyles':'g-','drawsty':'default'}
+                #datafiles['panel'+str(panel)]['vertlines'].append(closest_velocity)
+                #datafiles['panel'+str(panel)]['vertlinestyles'].append('dashed')
+                #datafiles['panel'+str(panel)]['vertlinecolors'].append('g')
+                #datafiles['panel'+str(panel)]['vertlinewidths'].append(4)
+                #datafiles['panel'+str(panel)]['vertlinelengths'].append(0.7)
     if datafiles == {}: continue
     for i in range(0,xpanels):
         for j in range(0,ypanels):
@@ -1686,7 +1699,7 @@ for cc in range(cols):
                 ax.set_title('core'+str(int(corenames[cc])))
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
-            ax.text(0.04, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
+            ax.text(0.04, 0.9,'('+str(int(corenames[cc]))+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             if datafiles['panel'+str(panelnum)]['xlim'] != []:
                 ax.set_xlim(datafiles['panel'+str(panelnum)]['xlim'][0],datafiles['panel'+str(panelnum)]['xlim'][1])
                 ax.hlines(0,datafiles['panel'+str(panelnum)]['xlim'][0],datafiles['panel'+str(panelnum)]['xlim'][1],linestyle='dotted')
@@ -1702,7 +1715,7 @@ for cc in range(cols):
                 ax.vlines(vl,ydown,yup*vertlinexlengths[nn],linestyles=vertlinexstyles[nn],colors=vertlinexcolors[nn],linewidths=vertlinexwidths[nn])
             if j != ypanels-1:
                 ax.set_yticks(ax.get_yticks()[1:])
-                ax.set_xticklabels(ax.get_xlabel(),visible=False)
+                #ax.set_xticklabels(ax.get_xlabel(),visible=False)
             else: 
                 ax.set_xlabel(xlabel)
             if i != 0:
@@ -1716,9 +1729,9 @@ for cc in range(cols):
     plt.close(fig)
     #os.system('open '+pdfname)
     #os.system('cp '+pdfname+os.path.expandvars(' ${DROPATH}/highres'))
-savetxtarr = np.stack((corenames,xw,yw,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0],nh3evelocities[0],coregaus_x0[1],coregaus_ex0[1],coregaus_sigma[1],coregaus_esigma[1],coregaus_x0[2],coregaus_ex0[2],coregaus_sigma[2],coregaus_esigma[2]),axis=1)
+#savetxtarr = np.stack((corenames,xw,yw,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0],nh3evelocities[0],coregaus_x0[1],coregaus_ex0[1],coregaus_sigma[1],coregaus_esigma[1],coregaus_x0[2],coregaus_ex0[2],coregaus_sigma[2],coregaus_esigma[2]),axis=1)
 #np.savetxt('Lanecores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
-np.savetxt('Lanecores_all0p25channel_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
+#np.savetxt('Lanecores_all0p25channel_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f')
 
 
 
