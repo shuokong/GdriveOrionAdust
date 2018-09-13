@@ -13,7 +13,7 @@ from matplotlib import rc
 from astropy.io import fits
 import astropy.wcs as wcs
 rc('text', usetex=True)
-font = {'weight' : 'normal','size':16,'family':'sans-serif','sans-serif':['Helvetica']}
+font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
 
 def gaus(x,a,x0,sigma):
@@ -45,12 +45,12 @@ cols = len(corenames)
 
 usepeakvel = 0
 usemom1vel = 0
-usegausvel = 1
+usegausvel = 0
 gausvel_edistribution = 0
 massvel = 0
 massmom1 = 0
 tkinhist = 0
-gaussigmahist = 0
+gaussigmahist = 1
 
 if usepeakvel == 1:
     diffvelocities = [nh3velocities-corevelocities12CO,nh3velocities-corevelocities13CO,nh3velocities-corevelocitiesC18O]
@@ -267,12 +267,12 @@ if usegausvel == 1:
             panel = i+j*xpanels+1
             print 'panel',panel 
             coreveldiff = diffvelocities[panel-1][~removeind]
-            print 'len(coreveldiff)',len(coreveldiff)
-            print 'np.nanmean(coreveldiff)',np.nanmean(coreveldiff)
-            print 'np.nanstd(coreveldiff)',np.nanstd(coreveldiff[abs(coreveldiff)<2])
-            print 'scipy.stats.norm.fit(coreveldiff)',norm.fit(coreveldiff[abs(coreveldiff)<2])
-            print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
-            ss = raw_input()
+            #print 'len(coreveldiff)',len(coreveldiff)
+            #print 'np.nanmean(coreveldiff)',np.nanmean(coreveldiff)
+            #print 'np.nanstd(coreveldiff)',np.nanstd(coreveldiff[abs(coreveldiff)<2])
+            #print 'scipy.stats.norm.fit(coreveldiff)',norm.fit(coreveldiff[abs(coreveldiff)<2])
+            #print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
+            #ss = raw_input()
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
             print 'bin size',bin_edges[1]-bin_edges[0]
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
@@ -280,7 +280,7 @@ if usegausvel == 1:
             perr = np.sqrt(np.diag(pcov))
             print 'popt',popt
             print 'perr',perr
-            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'all','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
+            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'all','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.2],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
             coreveldiff = diffvelocities[panel-1][(ysoyes)&(~removeind)]
             print 'len(coreveldiff)',len(coreveldiff)
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
@@ -331,13 +331,13 @@ if usegausvel == 1:
                 legend = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['legends']
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
-                #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
+                #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=20)
+            ax.legend(frameon=False,prop={'size':20},labelspacing=0.2) 
             if j == 0:
                 ax.set_title('Gauss')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
-            #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
-            #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
+            #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=20)
+            #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=20)
             xlabel = datafiles['panel'+str(panelnum)]['xlabel']
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
             vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
@@ -684,7 +684,7 @@ if gaussigmahist == 1:
     gaussigmas = [coregaus_sigma_C18O,coregaus_sigma_13CO,coregaus_sigma_C18O] # first element dummy
     mom2s = [coremom2_C18O,coremom2_13CO,coremom2_C18O] # first element dummy
     #print 'nh3velocities',nh3velocities
-    removeind = (coregaus_sigma_13CO<=0.)|np.isnan(coregaus_sigma_13CO)|(coregaus_sigma_C18O<=0.)|np.isnan(coregaus_sigma_C18O)|(coremom2_13CO<=0.)|np.isnan(coremom2_13CO)|(coremom2_C18O<=0.)|np.isnan(coremom2_C18O)
+    removeind = (nh3velocities<=0.)|(nh3velocities>=16.)|np.isnan(nh3velocities)|(coregaus_x0_13CO<=0.)|(coregaus_x0_13CO>=16.)|np.isnan(coregaus_x0_13CO)|(coregaus_sigma_13CO<=0.)|(coregaus_sigma_13CO>=16.)|np.isnan(coregaus_sigma_13CO)|(coregaus_x0_C18O<=0.)|(coregaus_x0_C18O>=16.)|np.isnan(coregaus_x0_C18O)|(coregaus_sigma_C18O<=0.)|(coregaus_sigma_C18O>=16.)|np.isnan(coregaus_sigma_C18O)
     #print 'removeind',removeind
     #sys.exit()
     datafiles = {}
@@ -700,7 +700,7 @@ if gaussigmahist == 1:
             print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
-            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'Gauss','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[0,50],'xscale':'linear','yscale':'linear','xlabel':r'$\sigma~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[0.31]}
+            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'Gauss','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[0,55],'xscale':'linear','yscale':'linear','xlabel':r'$\sigma~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[0.31]}
             coreveldiff = mom2s[panel-1][~removeind]
             print 'len(coreveldiff)',len(coreveldiff)
             hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
@@ -738,7 +738,7 @@ if gaussigmahist == 1:
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
                 #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
+            ax.legend(frameon=False,labelspacing=0.2) 
             #if j == 0:
             #    ax.set_title('Gauss')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)

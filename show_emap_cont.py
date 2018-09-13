@@ -26,25 +26,26 @@ if peak == 1:
     maxcolor = np.nanmax(hdu1.data)
     ff.show_colorscale(cmap='gray_r', vmin=0, vmax=maxcolor, stretch='sqrt')
     ff.show_regions('OrionKLellipse.reg')
-    ff.show_contour(hdu2, levels=0.01*np.concatenate((np.array([5,100,200]),np.arange(300,30000,600))), colors='yellow', linewidths=0.1)
-    ff.show_contour(hdu1, levels=[20./9.], colors='blue', linewidths=0.1)
+    ff.show_contour(hdu2, levels=0.01*np.concatenate((np.array([5,100,200]),np.arange(300,30000,600))), colors='yellow', linewidths=0.5)
+    ff.show_contour(hdu1, levels=[20./9.], colors='blue', linewidths=0.8)
     ff.add_colorbar() 
-    ff.colorbar.set_font(size=12)
-    ff.colorbar.set_pad(0.5)
-    ff.colorbar.set_axis_label_text(r'$A_K$')
-    ff.set_tick_labels_font(size=12)
-    ff.set_axis_labels_font(size=12)
+    ff.colorbar.set_font(size=20)
+    ff.colorbar.set_pad(0.2)
+    #ff.colorbar.set_axis_label_text(r'$A_K$')
+    ff.set_tick_labels_font(size=20)
+    ff.set_axis_labels_font(size=20)
     ff.add_scalebar(0.286,corner='bottom',pad=1) # degree for 2pc at 400 pc
     ff.scalebar.set_label('2 pc') 
-    ff.scalebar.set_font_size(12) 
+    ff.scalebar.set_font_size(20) 
     beamx = 213.59927
     beamy = -20.18993
     bmaj = 60./3600.
     bmin = 60./3600.
     beamangle = 0
     ff.show_ellipses(beamx,beamy,bmaj,bmin,angle=beamangle-90,facecolor='black',edgecolor='black')
-    #ff.add_label(beamx+1.0,beamy+2.0,'Peak Intensity $^{12}$CO(1-0)',size=12,weight='bold')
-    #ff.tick_labels.set_xformat('dd')
+    #ff.add_label(beamx+1.0,beamy+2.0,'Peak Intensity $^{12}$CO(1-0)',size=20,weight='bold')
+    ff.show_lines([np.array([[210,210],[-18.5,-20.5]])],linestyles='dashed',color='black',zorder=5)
+    ff.tick_labels.set_xformat('dd')
     ff.tick_labels.set_yformat('dd.d')
     pdfname = 'emap_cont.pdf'
     os.system('rm '+pdfname)

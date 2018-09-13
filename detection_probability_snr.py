@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator
 import os
 import pyfits
 from astropy.io import fits
@@ -115,7 +116,7 @@ def powerlawfit(xdata,ydata,yerr,pinit): # xdata,ydata,yerr n-element arrays, pi
 
 scale = 'lin'
 
-def getbindata(ffalma,ffmirex,mirexfac,contrms,snr):
+def getbindata(ffalma,ffmirex,mirexfac,contrms,snr,printbins=0):
     hdu_alma = pyfits.open(ffalma)[0] 
     hdu_mirex = pyfits.open(ffmirex)[0]
     alma_data = hdu_alma.data
@@ -142,7 +143,8 @@ def getbindata(ffalma,ffmirex,mirexfac,contrms,snr):
         prob = float(len(temporary2_alma))/float(len(temporary1_alma)) # probability = number of alma detection / number of mirex pixels in the bin
         probabilities.append(prob)
         err = (prob*(1.-prob)/float(len(temporary1_alma)))**0.5 
-        print len(temporary_alma),len(temporary2_alma),len(temporary1_alma),err
+        if printbins == 1:
+            print 'bb,prob,err',bb,prob,err
         errors.append(err) 
         bbins.append(bb) 
     return bbins,probabilities,errors
@@ -160,6 +162,8 @@ if scale == 'lin':
     contrms = 10.e-3
     snr = 142.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
+    ksx1 = np.copy(x)
+    ksy1 = np.copy(y)
     plt.errorbar(x,y,yerr=yerror,fmt='b.',ecolor='b',markersize=10,capthick=1.5,zorder=2,label=r'Orion A 15 K')
     # use 20 K for Kirk17 cores
     ffalma = 'OrionKLellipse_Lane_on_Stefan_header_CASA.fits'
@@ -184,11 +188,17 @@ if scale == 'lin':
     contrms = 2.e-4*(4.8/2.)**2
     snr = 3.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
+    ksx2 = np.copy(x)
+    ksy2 = np.copy(y)
     plt.errorbar(x,y,yerr=yerror,fmt='r.',ecolor='r',capthick=1.5,zorder=3,alpha=0.5,label=r'IRDC G28.37 smoothed')
     plt.ylim(-0.1,1.1)
     plt.xlim(0,0.8)
-    ax.legend(frameon=False,labelspacing=0.1,loc=4,fontsize=12)
-    #ax.text(0.05, 0.95,panel+r'~~~$\rm SNR\geq'+str(snr)+'$',horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
+    ax.legend(labelspacing=0.1,loc=4,fontsize=12)
+    plt.minorticks_on()
+    ax.xaxis.set_minor_locator(AutoMinorLocator(5))
+    ax.yaxis.set_minor_locator(AutoMinorLocator(5))
+    ax.tick_params(which='both',axis='both',direction='in')
+    ax.text(0.05, 0.95,r'(a)',horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
     pdfname = 'dpf_Orion_G28.pdf'
 ## logscale
 if scale == 'log':
@@ -220,4 +230,21 @@ plt.savefig(pdfname)
 os.system('open '+pdfname)
 plt.close(p)
 os.system('cp '+pdfname+os.path.expandvars(' /Users/shuokong/GoogleDrive/imagesSFE/'))
+
+from scipy import stats
+
+ksind1 = (ksx1>=0.08) & (ksx1<=0.28)
+ksind2 = (ksx2>=0.08) & (ksx2<=0.28)
+newksx1 = ksx1[ksind1]
+newksy1 = ksy1[ksind1]
+newksx2 = ksx2[ksind2]
+newksy2 = ksy2[ksind2]
+
+print newksx1 
+print newksy1 
+print newksx2 
+print newksy2 
+
+ks_d, ks_p = stats.ks_2samp(newksy1,newksy2)
+print 'ks_d, ks_p', ks_d, ks_p
 

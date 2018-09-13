@@ -12,7 +12,7 @@ from matplotlib import rc
 from astropy.io import fits
 import astropy.wcs as wcs
 rc('text', usetex=True)
-font = {'weight' : 'normal','size':16,'family':'sans-serif','sans-serif':['Helvetica']}
+font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
 
 def gaus(x,a,x0,sigma):
@@ -122,7 +122,7 @@ if usegausvel == 1:
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][lll]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
                 #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
+            ax.legend(frameon=False,labelspacing=0.2) 
             if j == 0:
                 ax.set_title('Gauss')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)

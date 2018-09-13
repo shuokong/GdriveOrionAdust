@@ -11,7 +11,7 @@ from matplotlib import rc
 from astropy.io import fits
 import astropy.wcs as wcs
 rc('text', usetex=True)
-font = {'weight' : 'normal','size':12,'family':'sans-serif','sans-serif':['Helvetica']}
+font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
 
 lletter = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
@@ -80,12 +80,12 @@ def mom2(rawvel,rawintens,thres):
 corenames, xw, yw, coremasses, Tkin, eTkin, sTkin = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/GAScores.txt',usecols=(0,1,2,3,10,11,12),unpack=True)
 #corenames, xw, yw, coremasses, Tkin, eTkin, sTkin = np.loadtxt('/Users/shuokong/GoogleDrive/OrionAdust/Lane2016/test.txt',usecols=(0,1,2,3,10,11,12),unpack=True)
 worldcoord4 = np.stack((xw,yw,np.zeros_like(xw),np.zeros_like(xw)),axis=1)
-worldcoord3 = np.stack((xw,yw,np.zeros_like(xw)),axis=1) # Alyssa cubes
+#worldcoord3 = np.stack((xw,yw,np.zeros_like(xw)),axis=1) # Alyssa cubes
 
 cellsize = 2. # voxel size in arcsec
 #lines = ['/Users/shuokong/GoogleDrive/12co/products/mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/mask_imfit_c18o_pix_2_Tmb.fits']
-#lines = ['/Users/shuokong/GoogleDrive/12co/products/convol32_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/convol32_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/convol32_mask_imfit_c18o_pix_2_Tmb.fits'] # convol32 to match GAS survey
-lines = ['/Users/shuokong/GoogleDrive/12co/products/convol32_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/convol32_specsmooth_0p25_convol_12co_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/convol32_specsmooth_0p25_mask_imfit_c18o_pix_2_Tmb.fits'] # Alyssa cubes convolved to 32"
+lines = ['/Users/shuokong/GoogleDrive/12co/products/convol32_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/convol32_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/convol32_mask_imfit_c18o_pix_2_Tmb.fits'] # convol32 to match GAS survey
+#lines = ['/Users/shuokong/GoogleDrive/12co/products/convol32_mask_imfit_12co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/13co/products/convol32_specsmooth_0p25_convol_12co_mask_imfit_13co_pix_2_Tmb.fits','/Users/shuokong/GoogleDrive/c18o/products/convol32_specsmooth_0p25_mask_imfit_c18o_pix_2_Tmb.fits'] # Alyssa cubes convolved to 32"
 linebeams = []
 linedata = []
 linerms = []
@@ -101,12 +101,14 @@ for j in range(len(lines)):
     header = hdulist[0].header
     del header['HISTORY']
     w = wcs.WCS(header)
-    if j == 0:
-        scidata = hdulist[0].data[0,:,:,:] # remove stokes, usually index order: v, dec, ra
-        pixcoord = w.all_world2pix(worldcoord4,1) # FITS standard uses 1
-    else:
-        scidata = hdulist[0].data[:,:,:] # usually index order: v, dec, ra
-        pixcoord = w.all_world2pix(worldcoord3,1) # FITS standard uses 1
+    scidata = hdulist[0].data[0,:,:,:] # remove stokes, usually index order: v, dec, ra
+    pixcoord = w.all_world2pix(worldcoord4,1) # FITS standard uses 1
+    #if j == 0:
+    #    scidata = hdulist[0].data[0,:,:,:] # remove stokes, usually index order: v, dec, ra
+    #    pixcoord = w.all_world2pix(worldcoord4,1) # FITS standard uses 1
+    #else:
+    #    scidata = hdulist[0].data[:,:,:] # usually index order: v, dec, ra
+    #    pixcoord = w.all_world2pix(worldcoord3,1) # FITS standard uses 1
     n1,n2,n3 = scidata.shape
     linedata.append(scidata) 
     bmaj = header['BMAJ']*3600. # convert to arcsec
@@ -131,10 +133,10 @@ for j in range(len(lines)):
 print 'finish getting line cube metadata'
 #linebeams = [[10.010999813688, 8.091999962928, -12.8900003433], [7.620999868944001, 6.155000813304, 9.93999958038], [10.499000083668, 7.742001023136, -0.40000000596]]
 #linerms = [1.1954995, 1.093392, 0.7671435]
-#linebeams = [[32.00000412762, 32.000000774868, -81.7325820923], [32.00000412762, 32.000000774868, 15.3498620987], [32.00000412762, 31.999997422116, 89.7622070312]] # convol32 to match GAS survey
-#linerms = [0.49438724, 0.19888465, 0.2835226] # convol32 to match GAS survey
-linebeams = [[32.00000412762, 32.000000774868, -81.7325820923], [32.000000774868, 31.999997422116, 77.4425811768], [32.00000412762, 31.999997422116, 89.7622070312]]
-linerms = [0.49438724, 0.11525758, 0.16264242]
+linebeams = [[32.00000412762, 32.000000774868, -81.7325820923], [32.00000412762, 32.000000774868, 15.3498620987], [32.00000412762, 31.999997422116, 89.7622070312]] # convol32 to match GAS survey
+linerms = [0.49438724, 0.19888465, 0.2835226] # convol32 to match GAS survey
+#linebeams = [[32.00000412762, 32.000000774868, -81.7325820923], [32.000000774868, 31.999997422116, 77.4425811768], [32.00000412762, 31.999997422116, 89.7622070312]]
+#linerms = [0.49438724, 0.11525758, 0.16264242]
 print 'linebeams',linebeams
 print 'linerms',linerms
 #sys.exit()
@@ -541,8 +543,8 @@ for cc in range(cols):
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
     #pdfname='corespectra/Kirk/single_convol32_averspec_Kirk_core'+str(cc+1)+'.pdf'
-    #pdfname='corespectra/Kirk/convol32_averspec_Kirk_core'+str(cc+1)+'.pdf'
-    pdfname='corespectra/Kirk/convol32_averspec_all0p25channel_core'+str(cc+1)+'.pdf'
+    pdfname='corespectra/Kirk/convol32_averspec_Kirk_core'+str(cc+1)+'.pdf'
+    #pdfname='corespectra/Kirk/convol32_averspec_all0p25channel_core'+str(cc+1)+'.pdf'
     datafiles = {}
     #print 'x,y',x,y
     ccnh3xx = int(nh3xx[cc])
@@ -589,11 +591,13 @@ for cc in range(cols):
             #np.savetxt('corespectra/datapoints/'+molnames[j]+'/convol32_Kirkcore'+str(int(corenames[cc]))+'_'+molnames[j]+'.txt',coresavetxtarr,fmt='%7.2f %10.2e')
             coremom0 = mom0(cdelt3/1.e3,rawintens)
             coremom0s[panel-1].append(coremom0)
+            velocityguess = []
             if j > 0:
                 if str(int(corenames[cc])) in multiGaussDict.keys():
                     guess = []
                     for ii in multiGaussDict[str(int(corenames[cc]))][molnames[j]]:
                         guess += [ii,0.2,0.2]
+                        velocityguess += [ii]
                     popt, pcov = curve_fit(multigaus, velocity, rawintens, p0=guess, maxfev=100000)
                     perr = np.sqrt(np.diag(pcov))
                     component_number = len(multiGaussDict[str(int(corenames[cc]))][molnames[j]])
@@ -611,6 +615,7 @@ for cc in range(cols):
                     guess = []
                     for ii in singleGaussDict[str(cc+1)][molnames[j]]:
                         guess += [ii,0.5,0.5]
+                        velocityguess += [ii]
                     popt, pcov = curve_fit(multigaus, velocity, rawintens, p0=guess)
                     perr = np.sqrt(np.diag(pcov))
                     closest_velocity = popt[0]
@@ -648,6 +653,7 @@ for cc in range(cols):
             if np.nanmin(rawintens) < ymin: ymin = np.nanmin(rawintens)
             if np.nanmax(rawintens) > ymax: ymax = np.nanmax(rawintens)
             datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'data','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':[ccvlsr[0],coremom1],'vertlinestyles':[ccvlsrstyle[0],'dotted'],'vertlinecolors':['b','b'],'vertlinewidths':[4,2],'vertlinelengths':[0.5,0.6]}
+            #datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'data','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':[ccvlsr[0],coremom1]+velocityguess,'vertlinestyles':[ccvlsrstyle[0],'dotted']+['solid' for ii in velocityguess],'vertlinecolors':['b','b']+['g' for ii in velocityguess],'vertlinewidths':[4,2]+[1 for ii in velocityguess],'vertlinelengths':[0.5,0.6]+[0.3 for ii in velocityguess]}
             if j > 0:
                 datafiles['panel'+str(panel)]['lines']['2']={'x':velocity,'y':multigaus(velocity,*popt),'legends':'fit','linestyles':'g-','drawsty':'default'}
                 datafiles['panel'+str(panel)]['vertlines'].append(closest_velocity)
@@ -680,19 +686,20 @@ for cc in range(cols):
                     peakvelocity = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['peakvelocity']
                     peaksnr = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['peaksnr']
                     ax.vlines(peakvelocity,ydown,yup,linestyle='dotted')
-                    #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            #ax.legend(frameon=False,prop={'size':14},labelspacing=0.1) 
+                    #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=20)
+            #ax.legend(frameon=False,prop={'size':20},labelspacing=0.1) 
             if j == 0:
                 ax.set_title('core'+str(int(corenames[cc])))
-            ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
-            #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
-            ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
+            ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=20)
+            #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=20)
+            ax.text(0.95, 0.9,'('+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=20)
             if datafiles['panel'+str(panelnum)]['xlim'] != []:
                 ax.set_xlim(datafiles['panel'+str(panelnum)]['xlim'][0],datafiles['panel'+str(panelnum)]['xlim'][1])
                 ax.hlines(0,datafiles['panel'+str(panelnum)]['xlim'][0],datafiles['panel'+str(panelnum)]['xlim'][1],linestyle='dotted')
             xlabel = datafiles['panel'+str(panelnum)]['xlabel']
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
             ax.set_xticks(np.arange(datafiles['panel'+str(panelnum)]['xlim'][0],datafiles['panel'+str(panelnum)]['xlim'][1],0.1),minor=True)
+            ax.tick_params(which='both',axis='both',direction='in')
             vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
             vertlinexstyles = datafiles['panel'+str(panelnum)]['vertlinestyles']
             vertlinexwidths = datafiles['panel'+str(panelnum)]['vertlinewidths']
@@ -717,9 +724,9 @@ for cc in range(cols):
     #os.system('open '+pdfname)
     #os.system('cp '+pdfname+os.path.expandvars(' ${DROPATH}/highres'))
 savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0],nh3evelocities[0],nh3tkin[0],coregaus_x0[1],coregaus_ex0[1],coregaus_sigma[1],coregaus_esigma[1],coregaus_x0[2],coregaus_ex0[2],coregaus_sigma[2],coregaus_esigma[2]),axis=1)
-#np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
+np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
 #np.savetxt('single_convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
-np.savetxt('convol32_Kirkcores_all0p25channel_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
+#np.savetxt('convol32_Kirkcores_all0p25channel_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
 
 
 
