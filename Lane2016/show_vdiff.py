@@ -49,8 +49,8 @@ usegausvel = 0
 gausvel_edistribution = 0
 massvel = 0
 massmom1 = 0
-tkinhist = 0
-gaussigmahist = 1
+tkinhist = 1
+gaussigmahist = 0
 
 if usepeakvel == 1:
     diffvelocities = [nh3velocities-corevelocities12CO,nh3velocities-corevelocities13CO,nh3velocities-corevelocitiesC18O]

@@ -164,7 +164,7 @@ if scale == 'lin':
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
     ksx1 = np.copy(x)
     ksy1 = np.copy(y)
-    plt.errorbar(x,y,yerr=yerror,fmt='b.',ecolor='b',markersize=10,capthick=1.5,zorder=2,label=r'Orion A 15 K')
+    plt.errorbar(x,y,yerr=yerror,fmt='b.',marker='.',markeredgecolor='blue',markerfacecolor='blue',ecolor='b',markersize=10,capthick=1.5,label=r'Orion A 15 K')
     # use 20 K for Kirk17 cores
     ffalma = 'OrionKLellipse_Lane_on_Stefan_header_CASA.fits'
     ffmirex = 'OrionKLellipse_mask_emap_Orion_A_bw1.0.fits'
@@ -172,7 +172,7 @@ if scale == 'lin':
     contrms = 10.e-3
     snr = 142./0.636
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
-    plt.errorbar(x,y,yerr=yerror,fmt='c.',ecolor='c',capthick=1.5,zorder=2,label=r'Orion A 20 K')
+    plt.errorbar(x,y,yerr=yerror,fmt='c.',marker='.',markeredgecolor='c',markerfacecolor='c',ecolor='c',capthick=1.5,label=r'Orion A 20 K')
     # alma in K18
     ffalma = 'rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
     ffmirex = 'wadiao_mirex_on_alma_header_uvtaper.fits'
@@ -180,7 +180,7 @@ if scale == 'lin':
     contrms = 2.e-4
     snr = 3.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
-    plt.errorbar(x,y,yerr=yerror,fmt='k.',ecolor='k',markersize=10,capthick=1.5,zorder=3,alpha=0.5,label=r'IRDC G28.37')
+    plt.errorbar(x,y,yerr=yerror,fmt='k.',marker='.',markeredgecolor='black',markerfacecolor='black',markersize=10,ecolor='black',capthick=1.5,label=r'IRDC G28.37')
     # smooth4p8 alma from K18
     ffalma = 'convol4p8_rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
     ffmirex = 'smooth4p8_wadiao_mirex_on_alma_header_uvtaper.fits'
@@ -190,7 +190,7 @@ if scale == 'lin':
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
     ksx2 = np.copy(x)
     ksy2 = np.copy(y)
-    plt.errorbar(x,y,yerr=yerror,fmt='r.',ecolor='r',capthick=1.5,zorder=3,alpha=0.5,label=r'IRDC G28.37 smoothed')
+    plt.errorbar(x,y,yerr=yerror,fmt='r.',marker='.',markeredgecolor='red',markerfacecolor='red',ecolor='r',capthick=1.5,label=r'IRDC G28.37 smoothed')
     plt.ylim(-0.1,1.1)
     plt.xlim(0,0.8)
     ax.legend(labelspacing=0.1,loc=4,fontsize=12)
