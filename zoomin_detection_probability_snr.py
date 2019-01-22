@@ -13,108 +13,6 @@ font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helve
 rc('font', **font)
 from scipy import optimize 
 
-def to_precision(x,p):
-    """
-    returns a string representation of x formatted with a precision of p
-
-    Based on the webkit javascript implementation taken from here:
-    https://code.google.com/p/webkit-mirror/source/browse/JavaScriptCore/kjs/number_object.cpp
-    """
-
-    x = float(x)
-
-    if x == 0.:
-        return "0." + "0"*(p-1)
-
-    out = []
-
-    if x < 0:
-        out.append("-")
-        x = -x
-
-    e = int(math.log10(x))
-    tens = math.pow(10, e - p + 1)
-    n = math.floor(x/tens)
-
-    if n < math.pow(10, p - 1):
-        e = e -1
-        tens = math.pow(10, e - p+1)
-        n = math.floor(x / tens)
-
-    if abs((n + 1.) * tens - x) <= abs(n * tens -x):
-        n = n + 1
-
-    if n >= math.pow(10,p):
-        n = n / 10.
-        e = e + 1
-
-    m = "%.*g" % (p, n)
-
-    if e < -2 or e >= p:
-        out.append(m[0])
-        if p > 1:
-            out.append(".")
-            out.extend(m[1:p])
-        out.append('e')
-        if e > 0:
-            out.append("+")
-        out.append(str(e))
-    elif e == (p -1):
-        out.append(m)
-    elif e >= 0:
-        out.append(m[:e+1])
-        if e+1 < len(m):
-            out.append(".")
-            out.extend(m[e+1:])
-    else:
-        out.append("0.")
-        out.extend(["0"]*-(e+1))
-        out.append(m)
-
-    return "".join(out)
-
-def powerlawfit(xdata,ydata,yerr,pinit): # xdata,ydata,yerr n-element arrays, pinit two-element list
-
-    ##########
-    # Fitting the data -- Least Squares Method
-    ##########
-
-    # xdata = np.linspace(1.1, 10.1, num_points)
-    # ydata = powerlaw(xdata, 10.0, -2.0)     # simulated perfect data
-    # yerr = 0.2 * ydata
-    
-    # Power-law fitting is best done by first converting
-    # to a linear equation and then fitting to a straight line.
-    # Note that the `logyerr` term here is ignoring a constant prefactor.
-    #
-    #  y = a * x^b
-    #  log(y) = log(a) + b*log(x)
-    #
-    
-    logx = np.log10(xdata)
-    logy = np.log10(ydata)
-    logyerr = yerr / ydata
-    
-    # define our (line) fitting function
-    fitfunc = lambda p, x: p[0] + p[1] * x
-    errfunc = lambda p, x, y, err: (y - fitfunc(p, x)) / err
-    
-    # pinit = [1.0, -1.0]
-    out = optimize.leastsq(errfunc, pinit, args=(logx, logy, logyerr), full_output=1)
-    
-    pfinal = out[0]
-    covar = out[1]
-    print pfinal
-    print covar
-    
-    index = pfinal[1]
-    amp = 10.0**pfinal[0]
-    
-    indexErr = np.sqrt( covar[1][1] )
-    ampErr = np.sqrt( covar[0][0] ) * amp 
-     
-    return index,indexErr,amp,ampErr 
-
 scale = 'lin'
 
 def getbindata(ffalma,ffmirex,mirexfac,contrms,snr,minAv,maxAv,nbins):
@@ -150,7 +48,7 @@ def getbindata(ffalma,ffmirex,mirexfac,contrms,snr,minAv,maxAv,nbins):
         print len(temporary_alma),len(temporary2_alma),len(temporary1_alma),err
         errors.append(err) 
         bbins.append(bb) 
-    return bbins,probabilities,errors
+    return np.array(bbins),np.array(probabilities),np.array(errors)
 
 def coremass(S850,kappa=0.012,Td=15.,D=400.):
     """S850 in Jy, kappa in cm2 g-1, Td in K, D in pc"""
@@ -249,6 +147,9 @@ scidata = hdu_nicest.data
 #yy = pixcoordy.astype(int)
 #coreak = scidata[yy,xx]
 ff_lanecores = 'Lanecores_on_Stefan_header.fits'
+## first make lane core pixels as 1 (others 0) in Lanecores_nofreq_OrionA_850_auto_mos_clip.fits
+## then reproject Lanecores_nofreq_OrionA_850_auto_mos_clip.fits to emap_Orion_A_bw1.0.fits
+## so no smoothing is done to Lane cores
 hdu_lanecores = pyfits.open(ff_lanecores)[0]
 scidata_lanecores = hdu_lanecores.data
 lanecores_detection = (scidata_lanecores>0)
@@ -298,11 +199,18 @@ if scale == 'lin':
     ax.errorbar(x,y,yerr=yerror,fmt='g.',ecolor='g',capthick=1.5,zorder=2,label=r'$\rm pixel~SNR\geq~$'+str(int(snr)))
     snr = 10.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr,avmin,avmax,nnbins)
+    fr_10_20 = (x>10)&(x<20)
+    ppp = np.polyfit(x[fr_10_20],y[fr_10_20],deg=1,w=yerror[fr_10_20])
+    print 'fr_10_20 ppp',ppp
+    fr_20_30 = (x>20)&(x<30)
+    ppp = np.polyfit(x[fr_20_30],y[fr_20_30],deg=1,w=yerror[fr_20_30])
+    print 'fr_20_30 ppp',ppp
     ax.errorbar(x,y,yerr=yerror,fmt='b.',ecolor='b',capthick=1.5,zorder=2,label=r'$\rm pixel~SNR\geq~$'+str(int(snr)))
     ax.errorbar(bincenter,dpf_hist,yerr=(dpf_hist*(1-dpf_hist)/av_hist)**0.5,drawstyle='steps-mid',color='k',capthick=1.5,zorder=2,label=r'$\rm core$')
+    ax.vlines(20,-0.1,0.7,linestyles='dashed')
     ax.set_ylim(-0.1,1.1)
     ax.set_xlim(avmin,avmax)
-    ax.legend(frameon=False,labelspacing=0.5,loc=2,handletextpad=0.5,fontsize=12)
+    ax.legend(frameon=False,labelspacing=0.5,loc=2,handletextpad=0.5,fontsize=20)
     ax.text(0.98, 0.95,'(a)',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
     ax.set_ylabel(r'$\rm detection~probability$')
 ###  
@@ -323,7 +231,7 @@ if scale == 'lin':
     ax.errorbar(bincenter,dpf_hist,yerr=(dpf_hist*(1-dpf_hist)/av_hist)**0.5,drawstyle='steps-mid',color='k',capthick=1.5,zorder=2,label=r'$\rm core$')
     ax.set_ylim(-0.1,0.6)
     ax.set_xlim(avmin,avmax)
-    ax.legend(frameon=False,labelspacing=0.5,loc=2,handletextpad=0.5,fontsize=12)
+    ax.legend(frameon=False,labelspacing=0.5,loc=2,handletextpad=0.5,fontsize=20)
     ax.text(0.98, 0.95,'(b)',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
     ax.set_ylabel(r'$\rm detection~probability$')
     ax.set_xlabel(r'$\rm A_V~(mag)$')

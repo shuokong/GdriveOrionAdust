@@ -45,11 +45,11 @@ cols = len(corenames)
 
 usepeakvel = 0
 usemom1vel = 0
-usegausvel = 0
+usegausvel = 1
 gausvel_edistribution = 0
 massvel = 0
 massmom1 = 0
-tkinhist = 1
+tkinhist = 0
 gaussigmahist = 0
 
 if usepeakvel == 1:
@@ -333,8 +333,8 @@ if usegausvel == 1:
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
                 #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=20)
             ax.legend(frameon=False,prop={'size':20},labelspacing=0.2) 
-            if j == 0:
-                ax.set_title('Gauss')
+            #if j == 0:
+            #    ax.set_title('Gauss')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
             #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=20)
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=20)

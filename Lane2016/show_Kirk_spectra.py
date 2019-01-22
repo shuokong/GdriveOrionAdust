@@ -652,7 +652,7 @@ for cc in range(cols):
             ymax = 0
             if np.nanmin(rawintens) < ymin: ymin = np.nanmin(rawintens)
             if np.nanmax(rawintens) > ymax: ymax = np.nanmax(rawintens)
-            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'data','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':[ccvlsr[0],coremom1],'vertlinestyles':[ccvlsrstyle[0],'dotted'],'vertlinecolors':['b','b'],'vertlinewidths':[4,2],'vertlinelengths':[0.5,0.6]}
+            datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'data','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':[ccvlsr[0]],'vertlinestyles':[ccvlsrstyle[0]],'vertlinecolors':['b'],'vertlinewidths':[4],'vertlinelengths':[0.5]}
             #datafiles['panel'+str(panel)] = {'title':linenames[j],'lines':{'1':{'x':velocity,'y':rawintens,'peakvelocity':velocity[peakind],'peaksnr':snr,'legends':'data','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[ymin-(ymax-ymin)/10.,ymax+(ymax-ymin)/10.],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm LSR}~\rm (km~s^{-1})$','ylabel':r'$T_{\rm mb}~\rm (K)$','text':'','vertlines':[ccvlsr[0],coremom1]+velocityguess,'vertlinestyles':[ccvlsrstyle[0],'dotted']+['solid' for ii in velocityguess],'vertlinecolors':['b','b']+['g' for ii in velocityguess],'vertlinewidths':[4,2]+[1 for ii in velocityguess],'vertlinelengths':[0.5,0.6]+[0.3 for ii in velocityguess]}
             if j > 0:
                 datafiles['panel'+str(panel)]['lines']['2']={'x':velocity,'y':multigaus(velocity,*popt),'legends':'fit','linestyles':'g-','drawsty':'default'}
@@ -682,10 +682,10 @@ for cc in range(cols):
                 legend = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['legends']
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
-                if 'peakvelocity' in datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)].keys():
-                    peakvelocity = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['peakvelocity']
-                    peaksnr = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['peaksnr']
-                    ax.vlines(peakvelocity,ydown,yup,linestyle='dotted')
+#                if 'peakvelocity' in datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)].keys():
+#                    peakvelocity = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['peakvelocity']
+#                    peaksnr = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['peaksnr']
+#                    ax.vlines(peakvelocity,ydown,yup,linestyle='dotted')
                     #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=20)
             #ax.legend(frameon=False,prop={'size':20},labelspacing=0.1) 
             if j == 0:
