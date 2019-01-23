@@ -70,6 +70,7 @@ print 'popt',popt
 print 'perr',perr
 datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'all','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,50],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
 coreveldiff = diffvelocities[panel-1][(ysoyes)&(~removeind)]
+coreveldiffysoyes = diffvelocities[panel-1][(ysoyes)&(~removeind)]
 print 'len(coreveldiff)',len(coreveldiff)
 hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
 bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
@@ -80,6 +81,7 @@ print 'perr',perr
 datafiles['panel'+str(panel-1)]['lines']['3'] = {'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'YSO','linestyles':'b-','drawsty':'steps-mid'}
 datafiles['panel'+str(panel-1)]['lines']['4'] = {'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'b--','drawsty':'default'}
 coreveldiff = diffvelocities[panel-1][(ysono)&(~removeind)]
+coreveldiffysono = diffvelocities[panel-1][(ysono)&(~removeind)]
 print 'len(coreveldiff)',len(coreveldiff)
 hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
 bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
@@ -148,12 +150,26 @@ raw_dec_list = np.array([-4.876200218,-4.879461026,-4.897820323,-4.915411506,-4.
 
 xwysoyes = xw[(ysoyes)&(~removeind)]
 ywysoyes = yw[(ysoyes)&(~removeind)]
+offsetysoyes = []
+for nnn,iii in enumerate(xwysoyes):
+    xxww = iii
+    yyww = ywysoyes[nnn]
+    dist = [((xxww-ii)**2+(yyww-raw_dec_list[nn])**2)**0.5 for nn,ii in enumerate(raw_ra_list)]
+    offsetysoyes.append(42.-np.argmin(dist)*3.) # raw_ra_list first one at 42 arcmin offset (north), 3 arcmin step pv cut
+offsetysoyesarr = np.array(offsetysoyes)
+
 xwysono = xw[(ysono)&(~removeind)]
 ywysono = yw[(ysono)&(~removeind)]
-
-for nn,ii in enumerate(raw_ra_list):
+offsetysono = []
+for nnn,iii in enumerate(xwysono):
+    xxww = iii
+    yyww = ywysono[nnn]
+    dist = [((xxww-ii)**2+(yyww-raw_dec_list[nn])**2)**0.5 for nn,ii in enumerate(raw_ra_list)]
+    offsetysono.append(42.-np.argmin(dist)*3.) # raw_ra_list first one at 42 arcmin offset (north), 3 arcmin step pv cut
+offsetysonoarr = np.array(offsetysono)
 
 name_cube = 'pv_mask_imfit_13co_pix_2_Tmb_trans_shift.fits'
+name_cube_halfmax = 'pv_mask_imfit_13co_pix_2_Tmb_trans_shift_halfmax.fits'
 
 mmap=pyfits.open(name_cube)
 cube=mmap[0].data
@@ -169,18 +185,23 @@ veltickslatex = [r"$"+str(ii)+r"$" for ii in velticks]
 posticks = [42,21,0,-21,-42,-63]
 pospix = [(float(ii)-crval2)/cdelt2 for ii in posticks]
 postickslatex = [r"$"+str(ii)+r"$" for ii in posticks]
+mmap_halfmax=pyfits.open(name_cube_halfmax)
+cube_halfmax=mmap_halfmax[0].data
 
 panelnum = 2
 ax2 = plt.subplot(gs[panelnum-1])
 ax2.imshow(cube,cmap='gray_r',aspect='auto',extent=[0,naxis1+0.5,naxis2-0.5,-0.5],interpolation='bicubic')
+plt.contour(cube_halfmax,levels=[0,1],colors='gray')
 #ax2.set_xticklabels(ax2.get_xlabel(),visible=True)
+ax2.scatter((coreveldiffysoyes-crval1)/cdelt1,(offsetysoyesarr-crval2)/cdelt2,facecolors='b')
+ax2.scatter((coreveldiffysono-crval1)/cdelt1,(offsetysonoarr-crval2)/cdelt2,facecolors='y')
 ax2.set_xticks(velpix)
 ax2.set_xticklabels(veltickslatex)
 ax2.set_yticks(pospix)
 ax2.set_yticklabels(postickslatex)
 ax2.tick_params(axis='both',direction='in',length=5,which='major',top=True,right=True)
 ax2.set_xlabel(xlabel)
-ax2.set_ylabel(r'$\rm Offsets~[arcmin]$')
+ax2.set_ylabel(r'$\rm Offsets~(arcmin)$')
         
 os.system('rm '+pdfname)
 plt.savefig(pdfname,bbox_inches='tight')
