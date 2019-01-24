@@ -8,6 +8,9 @@ from astropy import wcs
 name_cube = 'pv_mask_imfit_13co_pix_2_Tmb.fits'
 name_out = 'pv_mask_imfit_13co_pix_2_Tmb_trans_shift.fits'
 name_out_halfmax = 'pv_mask_imfit_13co_pix_2_Tmb_trans_shift_halfmax.fits'
+name_cube = 'pv_mask_imfit_c18o_pix_2_Tmb.fits'
+name_out = 'pv_mask_imfit_c18o_pix_2_Tmb_trans_shift.fits'
+name_out_halfmax = 'pv_mask_imfit_c18o_pix_2_Tmb_trans_shift_halfmax.fits'
 
 mmap=pyfits.open(name_cube)
 cube=mmap[0].data

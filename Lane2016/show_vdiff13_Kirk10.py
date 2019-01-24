@@ -95,7 +95,7 @@ datafiles['panel'+str(panel-1)]['lines']['6'] = {'x':bincenter,'y':gaus(bincente
 fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels))
 gs = gridspec.GridSpec(2,1,height_ratios=[1,2])
 plt.subplots_adjust(wspace=0.001,hspace=0.001)
-pdfname='corespectra/vdiffgaussKirk10.pdf'
+pdfname='corespectra/vdiffgauss13Kirk10.pdf'
 i = 0
 panelnum = 1
 ax = plt.subplot(gs[panelnum-1])
@@ -193,8 +193,8 @@ ax2 = plt.subplot(gs[panelnum-1])
 ax2.imshow(cube,cmap='gray_r',aspect='auto',extent=[0,naxis1+0.5,naxis2-0.5,-0.5],interpolation='bicubic')
 plt.contour(cube_halfmax,levels=[0,1],colors='gray')
 #ax2.set_xticklabels(ax2.get_xlabel(),visible=True)
-ax2.scatter((coreveldiffysoyes-crval1)/cdelt1,(offsetysoyesarr-crval2)/cdelt2,facecolors='b')
-ax2.scatter((coreveldiffysono-crval1)/cdelt1,(offsetysonoarr-crval2)/cdelt2,facecolors='y')
+ax2.scatter((coreveldiffysoyes-crval1)/cdelt1,(offsetysoyesarr-crval2)/cdelt2,facecolors='b',zorder=2)
+ax2.scatter((coreveldiffysono-crval1)/cdelt1,(offsetysonoarr-crval2)/cdelt2,facecolors='y',zorder=3)
 ax2.set_xticks(velpix)
 ax2.set_xticklabels(veltickslatex)
 ax2.set_yticks(pospix)
