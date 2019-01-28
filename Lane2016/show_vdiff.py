@@ -273,7 +273,7 @@ if usegausvel == 1:
             #print 'scipy.stats.norm.fit(coreveldiff)',norm.fit(coreveldiff[abs(coreveldiff)<2])
             #print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
             #ss = raw_input()
-            hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+            hist, bin_edges = np.histogram(coreveldiff,bins=30,range=(vlow,vhigh))
             print 'bin size',bin_edges[1]-bin_edges[0]
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
@@ -283,7 +283,7 @@ if usegausvel == 1:
             datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'all','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.2],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
             coreveldiff = diffvelocities[panel-1][(ysoyes)&(~removeind)]
             print 'len(coreveldiff)',len(coreveldiff)
-            hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+            hist, bin_edges = np.histogram(coreveldiff,bins=30,range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
             perr = np.sqrt(np.diag(pcov))
@@ -293,7 +293,7 @@ if usegausvel == 1:
             datafiles['panel'+str(panel-1)]['lines']['4'] = {'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'b--','drawsty':'default'}
             coreveldiff = diffvelocities[panel-1][(ysono)&(~removeind)]
             print 'len(coreveldiff)',len(coreveldiff)
-            hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+            hist, bin_edges = np.histogram(coreveldiff,bins=30,range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
             perr = np.sqrt(np.diag(pcov))
@@ -615,7 +615,7 @@ if tkinhist == 1:
             datafiles['panel'+str(panel)] = {'title':'','lines':{
                                                                            '1':{'x':bincenter,'y':hist,'peaksnr':[],'legends':'data','linestyles':'k-','drawsty':'steps-mid'},
                                                                            #'2':{'x':bincenter,'y':gaus(bincenter,*popt),'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'b-','drawsty':'default'},
-                                                                           },'xlim':[tlow,thigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$T_{\rm k,NH_3}~\rm (K)$','ylabel':r'$\rm number$','text':'','vertlines':[]}
+                                                                           },'xlim':[tlow,thigh],'ylim':[0,np.nanmax(hist)*1.1],'xscale':'linear','yscale':'linear','xlabel':r'$T_{\rm k,NH_3}~\rm (K)$','ylabel':r'$\rm number$','text':'','vertlines':[18.]}
     
     xpanelwidth = 7
     ypanelwidth = 6
@@ -648,7 +648,7 @@ if tkinhist == 1:
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
                 #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
+            #ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
             if j == 0:
                 ax.set_title(r'')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
@@ -656,9 +656,9 @@ if tkinhist == 1:
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             xlabel = datafiles['panel'+str(panelnum)]['xlabel']
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
-            #vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
-            #for vl in vertlinex:
-            #    ax.vlines(vl,ydown,yup*0.6,linestyles='dashed',colors='b')
+            vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
+            for vl in vertlinex:
+                ax.vlines(vl,ydown,yup,linestyles='dashed',colors='k')
             if j != ypanels-1:
                 ax.set_yticks(ax.get_yticks()[1:])
                 ax.set_xticklabels(ax.get_xlabel(),visible=False)
