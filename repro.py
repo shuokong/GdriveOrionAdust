@@ -42,13 +42,19 @@ from astropy.utils.data import get_pkg_data_filename
 #array[np.isnan(hdu2.data)] = np.nan
 #fits.writeto('dusttemp_Stutz_on_OrionKLellipse_header.fits', array, hdu2.header, clobber=True)
 
-hdu1 = fits.open(get_pkg_data_filename('herschelAmelia/OrionA_all_spire250_nh_mask_corr_apex.fits'))[0]
+#hdu1 = fits.open(get_pkg_data_filename('herschelAmelia/OrionA_all_spire250_nh_mask_corr_apex.fits'))[0]
+#hdu2 = fits.open(get_pkg_data_filename('Lane2016/nofreq_OrionA_850_auto_mos_clip.fits'))[0]
+#from reproject import reproject_interp
+#array, footprint = reproject_interp(hdu1, hdu2.header)
+#array[np.isnan(hdu2.data)] = np.nan
+#fits.writeto('herschelAmelia/Stutz_on_Lane_header.fits', array, hdu2.header, clobber=True)
+#dist = 400. # pc
+#pixelscale = 3.*dist*1.5e13 # cm
+#print 'np.nansum(array)',np.nansum(array)
+#print 'total Herschel mass in Lane region',np.nansum(array)/4.27e23*pixelscale**2/2.e33,'Msun'
+
+hdu1 = fits.open(get_pkg_data_filename('emap_Orion_A_bw1.0.fits'))[1]
 hdu2 = fits.open(get_pkg_data_filename('Lane2016/nofreq_OrionA_850_auto_mos_clip.fits'))[0]
 from reproject import reproject_interp
 array, footprint = reproject_interp(hdu1, hdu2.header)
-array[np.isnan(hdu2.data)] = np.nan
-fits.writeto('herschelAmelia/Stutz_on_Lane_header.fits', array, hdu2.header, clobber=True)
-dist = 400. # pc
-pixelscale = 3.*dist*1.5e13 # cm
-print 'total Herschel mass in Lane region',np.nansum(array)/4.27e23*pixelscale**2/2.e33,'Msun'
-
+fits.writeto('Stefan_on_Lane_header.fits', array, hdu2.header, clobber=True) 

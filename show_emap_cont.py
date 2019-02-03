@@ -5,14 +5,18 @@ import matplotlib.pyplot as plt
 from astropy.io import fits
 import sys
 
-peak = 0
-lane = 1
+peak = 1
+lane = 0
 temp = 0
 histogram = 0
 
-hdu1 = fits.open('mask_emap_Orion_A_bw1.0.fits')[0]
+#hdu1 = fits.open('mask_emap_Orion_A_bw1.0.fits')[0]
+hdu1 = fits.open('emap_Orion_A_bw1.0.fits')[1]
 hdu2 = fits.open('Lane_on_Stefan_header_CASA.fits')[0]
 hdu3 = fits.open('../AncillaryData/GBT/OrionA_Tkin_DR1_rebase3_flag.fits')[0]
+hdu4 = fits.open('Lanecores_nofreq_OrionA_850_auto_mos_clip.fits')[0]
+hdu5 = fits.open('bool_mask_emap_Orion_A_bw1.0.fits')[0]
+mask_hdu = fits.open('herschelAmelia/mask_carmanro_OrionA_all_spire250_nh_mask_corr_apex.fits')[0]
 
 if peak == 1:
     xcenter=210.8647791
@@ -30,9 +34,11 @@ if peak == 1:
     ff.show_colorscale(cmap='gray_r', vmin=0, vmax=maxcolor, stretch='sqrt')
     ff.show_regions('OrionKLellipse.reg')
     #ff.show_contour(hdu2, levels=0.01*np.concatenate((np.array([5,100,200]),np.arange(300,30000,600))), colors='yellow', linewidths=0.5)
-    #ff.show_contour(hdu2, levels=[0.01*10.], colors='yellow', linewidths=0.5)
+    ff.show_contour(hdu4, levels=[0,1.], colors='cyan', linewidths=0.5, zorder=2)
+    ff.show_contour(hdu5, levels=[0,1.], colors='white', linewidths=0.5, zorder=2)
     ff.show_contour(hdu2, levels=[0.01*142.], colors='yellow', linewidths=1.0)
     ff.show_contour(hdu1, levels=[20./9.], colors='blue', linewidths=0.8)
+    ff.show_contour(mask_hdu, levels=1, colors='green', linewidths=0.5, linestyles='dashed', zorder=2)
     ff.add_colorbar() 
     ff.colorbar.set_font(size=20)
     ff.colorbar.set_pad(0.2)

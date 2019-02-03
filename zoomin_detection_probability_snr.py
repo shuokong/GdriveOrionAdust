@@ -133,7 +133,7 @@ hdu_jcmt = pyfits.open('Lane2016/OrionA_850_auto_mos_clip.fits')[0]
 print 'np.nansum(hdu_jcmt.data[hdu_jcmt.data>4.69e-4*5.])',np.nansum(hdu_jcmt.data[hdu_jcmt.data>4.69e-4*5.])
 print 'jcmt SNR>5 flux/np.nansum(flux850)',np.nansum(hdu_jcmt.data[hdu_jcmt.data>4.69e-4*5.])/np.nansum(flux850)
 hdu_nicest = pyfits.open(ffmirex)[0]
-#print 'np.nansum(hdu_nicest.data)',np.nansum(hdu_nicest.data)
+print 'np.nansum(hdu_nicest.data)',np.nansum(hdu_nicest.data)
 meingastdata = hdu_nicest.data[hdu_nicest.data>0]
 print 'np.nansum(meingastdata) to mass in Msun',np.nansum(meingastdata)*1.67e22/4.27e23*(30.*400.*1.5e13)**2/2.e33
 print 'Lane core mass fraction',np.nansum(mass850)/(np.nansum(meingastdata)*1.67e22/4.27e23*(30.*400.*1.5e13)**2/2.e33)
@@ -179,14 +179,14 @@ print 'type(av_hist)',type(av_hist)
 #contrms = 4.69e-4 # from Kirk paper table
 contrms = 10.e-3
 
-p=plt.figure(figsize=(7,12))
+p=plt.figure(figsize=(7,18))
 plt.subplots_adjust(top=0.98,bottom=0.1,left=0.12,right=0.96,hspace=0.1)
 pdfname = 'dpf_OrionA.pdf'
 
 ffalma = 'OrionKLellipse_Lane_on_Stefan_header_CASA.fits'
 ffmirex = 'OrionKLellipse_mask_emap_Orion_A_bw1.0.fits' # DPF plot applying the Orion KL mask
 
-ax=p.add_subplot(211)
+ax=p.add_subplot(311)
 avmin,avmax = (0,60)
 nnbins = (avmax-avmin)/2
 ## linear scale
@@ -214,7 +214,7 @@ if scale == 'lin':
     ax.text(0.98, 0.95,'(a)',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
     ax.set_ylabel(r'$\rm detection~probability$')
 ###  
-ax=p.add_subplot(212)
+ax=p.add_subplot(312)
 avmin,avmax = (0,20)
 nnbins = (avmax-avmin)/2
 ## linear scale
@@ -229,12 +229,26 @@ if scale == 'lin':
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr,avmin,avmax,nnbins)
     ax.errorbar(x,y,yerr=yerror,fmt='b.',ecolor='b',capthick=1.5,zorder=2,label=r'$\rm pixel~SNR\geq~$'+str(int(snr)))
     ax.errorbar(bincenter,dpf_hist,yerr=(dpf_hist*(1-dpf_hist)/av_hist)**0.5,drawstyle='steps-mid',color='k',capthick=1.5,zorder=2,label=r'$\rm core$')
-    ax.set_ylim(-0.1,0.6)
+    ax.set_ylim(-0.05,0.6)
     ax.set_xlim(avmin,avmax)
     ax.legend(frameon=False,labelspacing=0.5,loc=2,handletextpad=0.5,fontsize=20)
     ax.text(0.98, 0.95,'(b)',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
     ax.set_ylabel(r'$\rm detection~probability$')
-    ax.set_xlabel(r'$\rm A_V~(mag)$')
+#    ax.set_xlabel(r'$\rm A_V~(mag)$')
+###  
+coldens, wholecloud, getsourcecores = np.loadtxt('Getsources_Cumulative.csv',unpack=True)
+aav = coldens/1.88
+ax=p.add_subplot(313)
+avmin,avmax = (0,20)
+## linear scale
+ax.plot(aav,wholecloud,'b-',zorder=2,label=r'$\rm cloud$')
+ax.plot(aav,getsourcecores,'r--',zorder=2,label=r'$\rm cores$')
+ax.set_ylim(0, 1.1)
+ax.set_xlim(avmin,avmax)
+ax.legend(frameon=False,labelspacing=0.5,loc=3,handletextpad=0.5,fontsize=20)
+ax.text(0.98, 0.95,'(c)',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
+ax.set_ylabel(r'$\rm fractional~cumulative~mass~(\%)$')
+ax.set_xlabel(r'$\rm A_V~(mag)$')
 
 os.system('rm '+pdfname)
 plt.savefig(pdfname,bbox_inches='tight')

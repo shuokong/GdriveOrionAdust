@@ -45,12 +45,12 @@ cols = len(corenames)
 
 usepeakvel = 0
 usemom1vel = 0
-usegausvel = 1
+usegausvel = 0
 gausvel_edistribution = 0
 massvel = 0
 massmom1 = 0
 tkinhist = 0
-gaussigmahist = 0
+gaussigmahist = 1
 
 if usepeakvel == 1:
     diffvelocities = [nh3velocities-corevelocities12CO,nh3velocities-corevelocities13CO,nh3velocities-corevelocitiesC18O]
@@ -278,8 +278,11 @@ if usegausvel == 1:
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
             perr = np.sqrt(np.diag(pcov))
+            belowcsind = (abs(coreveldiff)<0.31)
+            belowcs = coreveldiff[belowcsind]
             print 'popt',popt
             print 'perr',perr
+            print 'belowcs fraction',float(len(belowcs))/float(len(coreveldiff))
             datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'all','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,np.nanmax(hist)*1.2],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
             coreveldiff = diffvelocities[panel-1][(ysoyes)&(~removeind)]
             print 'len(coreveldiff)',len(coreveldiff)
@@ -698,12 +701,12 @@ if gaussigmahist == 1:
             coreveldiff = gaussigmas[panel-1][~removeind]
             print 'len(coreveldiff)',len(coreveldiff)
             print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
-            hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+            hist, bin_edges = np.histogram(coreveldiff,bins=40,range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'Gauss','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[0,55],'xscale':'linear','yscale':'linear','xlabel':r'$\sigma~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[0.31]}
             coreveldiff = mom2s[panel-1][~removeind]
             print 'len(coreveldiff)',len(coreveldiff)
-            hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+            hist, bin_edges = np.histogram(coreveldiff,bins=40,range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
             datafiles['panel'+str(panel-1)]['lines']['2'] = {'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'2nd moment','linestyles':'b-','drawsty':'steps-mid'}

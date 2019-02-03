@@ -13,7 +13,7 @@ from matplotlib import rc
 from astropy.io import fits
 import astropy.wcs as wcs
 rc('text', usetex=True)
-font = {'weight' : 'normal','size':16,'family':'sans-serif','sans-serif':['Helvetica']}
+font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
 
 def gaus(x,a,x0,sigma):
@@ -63,8 +63,8 @@ ypanelwidth = 5
 vlow = -3
 vhigh = 3
 
-north = 1
-south = 0
+north = 0
+south = 1
 
 ### north
 if north == 1:
@@ -79,7 +79,7 @@ if north == 1:
             coreveldiff = diffvelocities[panel-1]
             print 'len(coreveldiff)',len(coreveldiff)
             print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
-            hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+            hist, bin_edges = np.histogram(coreveldiff,bins=60,range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
             perr = np.sqrt(np.diag(pcov))
@@ -117,7 +117,7 @@ if north == 1:
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
                 #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
+            ax.legend(frameon=False,prop={'size':20},labelspacing=0.2) 
             if j == 0:
                 ax.set_title('North')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
@@ -162,7 +162,7 @@ if south == 1:
             coreveldiff = diffvelocities[panel-1]
             print 'len(coreveldiff)',len(coreveldiff)
             print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
-            hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+            hist, bin_edges = np.histogram(coreveldiff,bins=60,range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
             perr = np.sqrt(np.diag(pcov))
@@ -200,7 +200,7 @@ if south == 1:
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
                 #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            ax.legend(frameon=False,prop={'size':14},labelspacing=0.2) 
+            ax.legend(frameon=False,prop={'size':20},labelspacing=0.2) 
             if j == 0:
                 ax.set_title('South')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)

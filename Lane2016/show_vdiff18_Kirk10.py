@@ -61,7 +61,7 @@ coreveldiff = diffvelocities[panel-1][~removeind]
 #print 'scipy.stats.norm.fit(coreveldiff)',norm.fit(coreveldiff[abs(coreveldiff)<2])
 #print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
 #ss = raw_input()
-hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+hist, bin_edges = np.histogram(coreveldiff,bins=60,range=(vlow,vhigh))
 print 'bin size',bin_edges[1]-bin_edges[0]
 bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
 popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
@@ -72,7 +72,7 @@ datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincen
 coreveldiff = diffvelocities[panel-1][(ysoyes)&(~removeind)]
 coreveldiffysoyes = diffvelocities[panel-1][(ysoyes)&(~removeind)]
 print 'len(coreveldiff)',len(coreveldiff)
-hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+hist, bin_edges = np.histogram(coreveldiff,bins=60,range=(vlow,vhigh))
 bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
 popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
 perr = np.sqrt(np.diag(pcov))
@@ -83,7 +83,7 @@ datafiles['panel'+str(panel-1)]['lines']['4'] = {'x':bincenter,'y':gaus(bincente
 coreveldiff = diffvelocities[panel-1][(ysono)&(~removeind)]
 coreveldiffysono = diffvelocities[panel-1][(ysono)&(~removeind)]
 print 'len(coreveldiff)',len(coreveldiff)
-hist, bin_edges = np.histogram(coreveldiff,bins='auto',range=(vlow,vhigh))
+hist, bin_edges = np.histogram(coreveldiff,bins=60,range=(vlow,vhigh))
 bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
 popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
 perr = np.sqrt(np.diag(pcov))
@@ -148,14 +148,18 @@ ax.tick_params(axis='both',direction='in',length=5,which='major',top=True,right=
 raw_ra_list = np.array([83.52329236,83.57316692,83.62030445,83.6670613,83.71382045,83.75252857,83.79620141,83.82111418,83.84564682,83.86251383,83.86210348,83.85289673,83.84292146,83.82604083,83.80992492,83.80935538,83.80014058,83.79092437,83.77326557,83.7632777,83.74561138,83.73638688,83.73637222,83.74557319,83.75323795,83.77088618,83.79621755,83.82001665,83.84612392,83.8783804,83.91332917,83.95142695,83.98952916,84.0308125,84.07400417,84.11910176,84.1642031,84.21046505]) # same as pvmap_orion.py !
 raw_dec_list = np.array([-4.876200218,-4.879461026,-4.897820323,-4.915411506,-4.93299871,-4.965857804,-4.99067018,-5.033833723,-5.076613716,-5.123974925,-5.173573767,-5.222459592,-5.271344718,-5.318700697,-5.36452826,-5.412955261,-5.461988054,-5.510106789,-5.555931851,-5.605577113,-5.6519109,-5.701555547,-5.752730272,-5.801156183,-5.84927762,-5.897401317,-5.940943148,-5.986011267,-6.029551074,-6.068507208,-6.103567778,-6.135131552,-6.166692778,-6.195094167,-6.219704167,-6.240522195,-6.261336664,-6.282571724]) # same as pvmap_orion.py !
 
+ra_list = np.concatenate([np.linspace(i,raw_ra_list[n+1],num=60,endpoint=False) for n,i in enumerate(raw_ra_list[:-1])])
+
+dec_list = np.concatenate([np.linspace(i,raw_dec_list[n+1],num=60,endpoint=False) for n,i in enumerate(raw_dec_list[:-1])])
+
 xwysoyes = xw[(ysoyes)&(~removeind)]
 ywysoyes = yw[(ysoyes)&(~removeind)]
 offsetysoyes = []
 for nnn,iii in enumerate(xwysoyes):
     xxww = iii
     yyww = ywysoyes[nnn]
-    dist = [((xxww-ii)**2+(yyww-raw_dec_list[nn])**2)**0.5 for nn,ii in enumerate(raw_ra_list)]
-    offsetysoyes.append(42.-np.argmin(dist)*3.) # raw_ra_list first one at 42 arcmin offset (north), 3 arcmin step pv cut
+    dist = [((xxww-ii)**2+(yyww-dec_list[nn])**2)**0.5 for nn,ii in enumerate(ra_list)]
+    offsetysoyes.append(42.-np.argmin(dist)*3./60.) # ra_list first one at 42 arcmin offset (north), 3 arcmin step pv cut
 offsetysoyesarr = np.array(offsetysoyes)
 
 xwysono = xw[(ysono)&(~removeind)]
@@ -164,8 +168,8 @@ offsetysono = []
 for nnn,iii in enumerate(xwysono):
     xxww = iii
     yyww = ywysono[nnn]
-    dist = [((xxww-ii)**2+(yyww-raw_dec_list[nn])**2)**0.5 for nn,ii in enumerate(raw_ra_list)]
-    offsetysono.append(42.-np.argmin(dist)*3.) # raw_ra_list first one at 42 arcmin offset (north), 3 arcmin step pv cut
+    dist = [((xxww-ii)**2+(yyww-dec_list[nn])**2)**0.5 for nn,ii in enumerate(ra_list)]
+    offsetysono.append(42.-np.argmin(dist)*3./60.) # ra_list first one at 42 arcmin offset (north), 3 arcmin step pv cut
 offsetysonoarr = np.array(offsetysono)
 
 name_cube = 'pv_mask_imfit_c18o_pix_2_Tmb_trans_shift.fits'
