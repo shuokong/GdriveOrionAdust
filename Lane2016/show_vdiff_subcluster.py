@@ -13,7 +13,7 @@ from matplotlib import rc
 from astropy.io import fits
 import astropy.wcs as wcs
 rc('text', usetex=True)
-font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
+font = {'weight' : 'normal','size':30,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
 
 def gaus(x,a,x0,sigma):
@@ -85,7 +85,7 @@ if north == 1:
             perr = np.sqrt(np.diag(pcov))
             print 'popt',popt
             print 'perr',perr
-            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'north cluster','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\rm x_0$='+'{0:.3f}'.format(popt[1])+r'$\pm$'+'{0:.3f}'.format(perr[1])+'\n'+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,30],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[popt[1]]}
+            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm x_0='+'{0:.2f}'.format(popt[1])+r'\pm'+'{0:.2f}'.format(perr[1])+'$\n'+r'$\sigma='+'{0:.2f}'.format(popt[2])+r'\pm'+'{0:.2f}'.format(perr[2])+r'$','linestyles':'b--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,30],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm ce}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[popt[1]]}
     
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
@@ -116,18 +116,18 @@ if north == 1:
                 legend = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['legends']
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
-                #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            ax.legend(frameon=False,prop={'size':20},labelspacing=0.2) 
+                #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center')
+            ax.legend(frameon=False,prop={'size':25},loc=2,labelspacing=0.2,handletextpad=0.1)
             if j == 0:
-                ax.set_title('North')
-            ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
+                ax.set_title(r'$\rm North$')
+            ax.text(0.95, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
             #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             xlabel = datafiles['panel'+str(panelnum)]['xlabel']
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
             vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
             for vl in vertlinex:
-                ax.vlines(vl,ydown,yup*0.9,linestyles='dashed',colors='k')
+                ax.vlines(vl,ydown,yup*0.9,linestyles='dashed',colors='b')
             if j != ypanels-1:
                 ax.set_yticks(ax.get_yticks()[1:])
                 ax.set_xticklabels(ax.get_xlabel(),visible=False)
@@ -168,7 +168,7 @@ if south == 1:
             perr = np.sqrt(np.diag(pcov))
             print 'popt',popt
             print 'perr',perr
-            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'south cluster','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\rm x_0$='+'{0:.3f}'.format(popt[1])+r'$\pm$'+'{0:.3f}'.format(perr[1])+'\n'+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,30],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[popt[1]]}
+            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm x_0='+'{0:.2f}'.format(popt[1])+r'\pm'+'{0:.2f}'.format(perr[1])+'$\n'+r'$\sigma='+'{0:.2f}'.format(popt[2])+r'\pm'+'{0:.2f}'.format(perr[2])+r'$','linestyles':'b--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,30],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm ce}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[popt[1]]}
     
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
@@ -199,18 +199,18 @@ if south == 1:
                 legend = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['legends']
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
-                #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
-            ax.legend(frameon=False,prop={'size':20},labelspacing=0.2) 
+                #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center')
+            ax.legend(frameon=False,prop={'size':25},loc=2,labelspacing=0.2,handletextpad=0.1)
             if j == 0:
-                ax.set_title('South')
-            ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
+                ax.set_title(r'$\rm South$')
+            ax.text(0.95, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
             #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
             xlabel = datafiles['panel'+str(panelnum)]['xlabel']
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
             vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
             for vl in vertlinex:
-                ax.vlines(vl,ydown,yup*0.9,linestyles='dashed',colors='k')
+                ax.vlines(vl,ydown,yup*0.9,linestyles='dashed',colors='b')
             if j != ypanels-1:
                 ax.set_yticks(ax.get_yticks()[1:])
                 ax.set_xticklabels(ax.get_xlabel(),visible=False)

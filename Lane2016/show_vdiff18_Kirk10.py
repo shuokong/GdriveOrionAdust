@@ -14,7 +14,7 @@ from matplotlib import rc
 from astropy.io import fits
 import astropy.wcs as wcs
 rc('text', usetex=True)
-font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
+font = {'weight' : 'normal','size':30,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
 
 def gaus(x,a,x0,sigma):
@@ -37,7 +37,7 @@ linenames = [r'$\rm ^{12}CO(1$-$0)$',r'$\rm ^{13}CO(1$-$0)$',r'$\rm C^{18}O(1$-$
 xpanels = 1
 ypanels = len(linenames)
 xpanelwidth = 10
-ypanelwidth = 5
+ypanelwidth = 7
 vlow = -3
 vhigh = 3
 mlow = np.nanmin(coremasses)
@@ -68,7 +68,7 @@ popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
 perr = np.sqrt(np.diag(pcov))
 print 'popt',popt
 print 'perr',perr
-datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'all','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,50],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm NH_3}-v_{\rm gauss}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
+datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm all$','linestyles':'k-','drawsty':'steps-mid'},'2':{'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm fit~\sigma='+'{0:.2f}'.format(popt[2])+r'\pm'+'{0:.2f}'.format(perr[2])+r'$','linestyles':'k--','drawsty':'default'}},'xlim':[vlow,vhigh],'ylim':[0,50],'xscale':'linear','yscale':'linear','xlabel':r'$v_{\rm ce}~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[-0.31,0.31]}
 coreveldiff = diffvelocities[panel-1][(ysoyes)&(~removeind)]
 coreveldiffysoyes = diffvelocities[panel-1][(ysoyes)&(~removeind)]
 print 'len(coreveldiff)',len(coreveldiff)
@@ -78,8 +78,8 @@ popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
 perr = np.sqrt(np.diag(pcov))
 print 'popt',popt
 print 'perr',perr
-datafiles['panel'+str(panel-1)]['lines']['3'] = {'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'YSO','linestyles':'b-','drawsty':'steps-mid'}
-datafiles['panel'+str(panel-1)]['lines']['4'] = {'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'b--','drawsty':'default'}
+datafiles['panel'+str(panel-1)]['lines']['3'] = {'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm YSO$','linestyles':'b-','drawsty':'steps-mid'}
+datafiles['panel'+str(panel-1)]['lines']['4'] = {'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm fit~\sigma='+'{0:.2f}'.format(popt[2])+r'\pm'+'{0:.2f}'.format(perr[2])+r'$','linestyles':'b--','drawsty':'default'}
 coreveldiff = diffvelocities[panel-1][(ysono)&(~removeind)]
 coreveldiffysono = diffvelocities[panel-1][(ysono)&(~removeind)]
 print 'len(coreveldiff)',len(coreveldiff)
@@ -89,11 +89,11 @@ popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
 perr = np.sqrt(np.diag(pcov))
 print 'popt',popt
 print 'perr',perr
-datafiles['panel'+str(panel-1)]['lines']['5'] = {'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'no YSO','linestyles':'y-','drawsty':'steps-mid'}
-datafiles['panel'+str(panel-1)]['lines']['6'] = {'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':'fit '+r'$\sigma$='+'{0:.3f}'.format(popt[2])+r'$\pm$'+'{0:.3f}'.format(perr[2]),'linestyles':'y--','drawsty':'default'}
+datafiles['panel'+str(panel-1)]['lines']['5'] = {'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm no~YSO$','linestyles':'y-','drawsty':'steps-mid'}
+datafiles['panel'+str(panel-1)]['lines']['6'] = {'x':bincenter,'y':gaus(bincenter,*popt),'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm fit~\sigma='+'{0:.2f}'.format(popt[2])+r'\pm'+'{0:.2f}'.format(perr[2])+r'$','linestyles':'y--','drawsty':'default'}
 
 fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels))
-gs = gridspec.GridSpec(2,1,height_ratios=[1,2])
+gs = gridspec.GridSpec(2,1,height_ratios=[2,3])
 plt.subplots_adjust(wspace=0.001,hspace=0.001)
 pdfname='corespectra/vdiffgauss18Kirk10.pdf'
 i = 0
@@ -119,18 +119,18 @@ for datafilenum in range(len(datafiles['panel'+str(panelnum)]['lines'].keys())):
     legend = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['legends']
     drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
     ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
-    #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=20)
-ax.legend(frameon=False,prop={'size':20},labelspacing=0.2) 
+    #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center')
+ax.legend(frameon=False,prop={'size':25},loc=2,labelspacing=0.2,handletextpad=0.1) 
 #if j == 0:
 #    ax.set_title('Gauss')
-ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
-#ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=20)
-#ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=20)
+ax.text(0.95, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
+#ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
+#ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
 xlabel = datafiles['panel'+str(panelnum)]['xlabel']
 ylabel = datafiles['panel'+str(panelnum)]['ylabel']
 vertlinex = datafiles['panel'+str(panelnum)]['vertlines']
 for vl in vertlinex:
-    ax.vlines(vl,ydown,yup*0.9,linestyles='dotted',colors='k')
+    ax.vlines(vl,ydown,yup*0.6,linestyles='dotted',colors='k')
 ax.set_yticks(ax.get_yticks()[1:])
 ax.set_xticklabels(ax.get_xlabel(),visible=False)
 if i != 0:

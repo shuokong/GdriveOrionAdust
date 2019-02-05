@@ -13,7 +13,7 @@ from matplotlib import rc
 from astropy.io import fits
 import astropy.wcs as wcs
 rc('text', usetex=True)
-font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
+font = {'weight' : 'normal','size':30,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
 
 def gaus(x,a,x0,sigma):
@@ -703,13 +703,13 @@ if gaussigmahist == 1:
             print 'min max coreveldiff',min(coreveldiff),max(coreveldiff)
             hist, bin_edges = np.histogram(coreveldiff,bins=40,range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
-            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'Gauss','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[0,55],'xscale':'linear','yscale':'linear','xlabel':r'$\sigma~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[0.31]}
+            datafiles['panel'+str(panel-1)] = {'title':linenames[j],'lines':{'1':{'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm Gauss$','linestyles':'k-','drawsty':'steps-mid'},},'xlim':[vlow,vhigh],'ylim':[0,50],'xscale':'linear','yscale':'linear','xlabel':r'$\sigma~\rm (km~s^{-1})$','ylabel':r'$\rm number$','text':'','vertlines':[0.31]}
             coreveldiff = mom2s[panel-1][~removeind]
             print 'len(coreveldiff)',len(coreveldiff)
             hist, bin_edges = np.histogram(coreveldiff,bins=40,range=(vlow,vhigh))
             bincenter = (bin_edges[:-1] + bin_edges[1:]) / 2.
             popt,pcov = curve_fit(gaus,bincenter,hist,p0=[1,0,0.5])
-            datafiles['panel'+str(panel-1)]['lines']['2'] = {'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':'2nd moment','linestyles':'b-','drawsty':'steps-mid'}
+            datafiles['panel'+str(panel-1)]['lines']['2'] = {'x':bincenter,'y':hist,'velocity':coreveldiff,'peaksnr':[],'legends':r'$\rm 2nd~moment$','linestyles':'b-','drawsty':'steps-mid'}
     
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
@@ -740,13 +740,13 @@ if gaussigmahist == 1:
                 legend = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['legends']
                 drawsty = datafiles['panel'+str(panelnum)]['lines'][str(datafilenum+1)]['drawsty']
                 ax.plot(x,y,linestyle,label=legend,drawstyle=drawsty)
-                #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=12)
+                #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center')
             ax.legend(frameon=False,labelspacing=0.2) 
             #if j == 0:
             #    ax.set_title('Gauss')
             ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
-            #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=12)
-            #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=12)
+            #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
+            #ax.text(0.95, 0.9,'('+str(cc+1)+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
             xlabel = datafiles['panel'+str(panelnum)]['xlabel']
             ylabel = datafiles['panel'+str(panelnum)]['ylabel']
             vertlinex = datafiles['panel'+str(panelnum)]['vertlines']

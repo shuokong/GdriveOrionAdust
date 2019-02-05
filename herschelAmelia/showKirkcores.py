@@ -3,6 +3,10 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits
+from matplotlib import rc
+rc('text', usetex=True)
+font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
+rc('font', **font)
 
 mom0 = 1
 histogram = 0
@@ -41,15 +45,14 @@ if mom0 == 1:
     ff.show_contour(mask_hdu, levels=1, colors='green', linewidths=2, linestyles='dashed', zorder=5)
     ff.show_circles(xw,yw,radius=20./3600.,edgecolor='blue')
     ff.add_colorbar() 
-    ff.colorbar.set_font(size=12)
+    ff.axis_labels.set_xtext(r'$\rm RA~(J2000)$')
+    ff.axis_labels.set_ytext(r'$\rm Dec~(J2000)$')
     ff.colorbar.set_pad(0.5)
-    ff.colorbar.set_axis_label_text('cm$^{-2}$')
-    ff.colorbar.set_font(size=12)
-    ff.set_tick_labels_font(size=12)
-    ff.set_axis_labels_font(size=12)
+    ff.colorbar.set_axis_label_text(r'$\rm cm^{-2}$')
+    ff.tick_labels.set_xformat('dd.d')
+    ff.tick_labels.set_yformat('dd.d')
     ff.add_scalebar(0.286,corner='bottom right',pad=10) # degree for 2pc at 400 pc
     ff.scalebar.set_label('2 pc')
-    ff.scalebar.set_font_size(12)
     #beamx = 83.41442439
     #beamy = -7.022846568
     #bmaj = hdu1.header['BMAJ']

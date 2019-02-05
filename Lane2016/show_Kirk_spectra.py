@@ -11,7 +11,7 @@ from matplotlib import rc
 from astropy.io import fits
 import astropy.wcs as wcs
 rc('text', usetex=True)
-font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
+font = {'weight' : 'normal','size':30,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
 
 lletter = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
@@ -689,10 +689,10 @@ for cc in range(cols):
                     #ax.text(peakvelocity+0.8, yup*0.9, '%.1f' % peakvelocity + ',' + '%.1f' % peaksnr,horizontalalignment='left',verticalalignment='center',fontsize=20)
             #ax.legend(frameon=False,prop={'size':20},labelspacing=0.1) 
             if j == 0:
-                ax.set_title('core'+str(int(corenames[cc])))
-            ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=20)
+                ax.set_title(r'$\rm core'+str(int(corenames[cc]))+r'$')
+            ax.text(0.05, 0.9,datafiles['panel'+str(panelnum)]['title'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
             #ax.text(0.1, 0.9,datafiles['panel'+str(panelnum)]['title']+' '+datafiles['panel'+str(panelnum)]['text'],horizontalalignment='left',verticalalignment='center',transform = ax.transAxes,fontsize=20)
-            ax.text(0.95, 0.9,'('+lletter[j]+')',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes,fontsize=20)
+            ax.text(0.95, 0.9,r'$\rm ('+lletter[j]+')$',horizontalalignment='right',verticalalignment='center',transform = ax.transAxes)
             if datafiles['panel'+str(panelnum)]['xlim'] != []:
                 ax.set_xlim(datafiles['panel'+str(panelnum)]['xlim'][0],datafiles['panel'+str(panelnum)]['xlim'][1])
                 ax.hlines(0,datafiles['panel'+str(panelnum)]['xlim'][0],datafiles['panel'+str(panelnum)]['xlim'][1],linestyle='dotted')

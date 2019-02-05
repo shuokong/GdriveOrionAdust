@@ -4,7 +4,7 @@ import scipy.optimize as optimize
 import matplotlib.pylab as plt
 from matplotlib import rc
 rc('text', usetex=True)
-font = {'weight' : 'normal','size':20,'family':'sans-serif','sans-serif':['Helvetica']}
+font = {'weight' : 'normal','size':30,'family':'sans-serif','sans-serif':['Helvetica']}
 rc('font', **font)
 
 #import pyspeckit
@@ -28,18 +28,18 @@ def find_nearest(ralist,declist,pointra,pointdec,mindist):
 
 def main():
 
-    name_cube = '/Users/shuokong/GoogleDrive/13co/products/mask_imfit_13co_pix_2_Tmb.fits'
     name_cube = '/Users/shuokong/GoogleDrive/c18o/products/mask_imfit_c18o_pix_2_Tmb.fits'
+    name_cube = '/Users/shuokong/GoogleDrive/13co/products/mask_imfit_13co_pix_2_Tmb.fits'
     
     # one pv cut
     raw_ra_list = np.array([83.52329236,83.57316692,83.62030445,83.6670613,83.71382045,83.75252857,83.79620141,83.82111418,83.84564682,83.86251383,83.86210348,83.85289673,83.84292146,83.82604083,83.80992492,83.80935538,83.80014058,83.79092437,83.77326557,83.7632777,83.74561138,83.73638688,83.73637222,83.74557319,83.75323795,83.77088618,83.79621755,83.82001665,83.84612392,83.8783804,83.91332917,83.95142695,83.98952916,84.0308125,84.07400417,84.11910176,84.1642031,84.21046505])
     raw_dec_list = np.array([-4.876200218,-4.879461026,-4.897820323,-4.915411506,-4.93299871,-4.965857804,-4.99067018,-5.033833723,-5.076613716,-5.123974925,-5.173573767,-5.222459592,-5.271344718,-5.318700697,-5.36452826,-5.412955261,-5.461988054,-5.510106789,-5.555931851,-5.605577113,-5.6519109,-5.701555547,-5.752730272,-5.801156183,-5.84927762,-5.897401317,-5.940943148,-5.986011267,-6.029551074,-6.068507208,-6.103567778,-6.135131552,-6.166692778,-6.195094167,-6.219704167,-6.240522195,-6.261336664,-6.282571724]) # stretch out a bit more to the south, in pvpoints1.reg
-    pdfname = 'pvKirkcores13.pdf'
     pdfname = 'pvKirkcores18.pdf'
-    ttitle = r'$\rm PV-diagram~ ^{13}CO$'
+    pdfname = 'pvKirkcores13.pdf'
     ttitle = r'$\rm PV-diagram~ C^{18}O$'
-    name_out = 'pv_mask_imfit_13co_pix_2_Tmb.fits'
+    ttitle = r'$\rm PV-diagram~ ^{13}CO$'
     name_out = 'pv_mask_imfit_c18o_pix_2_Tmb.fits'
+    name_out = 'pv_mask_imfit_13co_pix_2_Tmb.fits'
     # two pv cuts
     #raw_ra_list = np.array([83.67620913,83.72689646,83.76744555,83.80672999,83.83207412,83.83206894,83.83206385,83.81430922,83.79655257,83.7800611,83.76229848,83.75467822,83.74578865,83.73816527,83.73815189,83.7279902,83.71887032,83.70120011,83.69197158,83.69195291,83.70115023,83.70881131,83.72645601,83.75178434,83.77558022,83.80168441,83.83393826,83.86888476,83.90698058,83.94508081,83.98636246,84.02955277,84.07464931,84.11974958])
     #raw_dec_list = np.array([-4.917350655,-4.935047706,-4.962208694,-4.992523282,-5.036723747,-5.085971062,-5.133955069,-5.183198853,-5.227390751,-5.272844674,-5.320822798,-5.370065363,-5.418044445,-5.468548752,-5.517792235,-5.564507161,-5.61503437,-5.661366732,-5.711010624,-5.762185328,-5.810611952,-5.858733988,-5.906859078,-5.950402914,-5.995472923,-6.039014807,-6.077973505,-6.113036854,-6.144603656,-6.176167913,-6.204572583,-6.229186014,-6.25000762,-6.270825669]) 
@@ -98,19 +98,17 @@ def main():
     
     gc.ticks.set_xspacing(21.)
     gc.ticks.set_minor_frequency(7)
-    gc.axis_labels.set_ytext('Velocity (km/s)')
+    gc.axis_labels.set_ytext(r'$\rm Velocity~(km~s^{-1})$')
+    gc.axis_labels.set_xtext(r'$\rm Offsets~(arcmin)$')
     gc.ticks.show()
-    plt.title(ttitle,size=20)
+    plt.title(ttitle)
     gc.ticks.set_color('black')
     gc.ticks.set_length(10)
     gc.ticks.set_linewidth(2)
     gc.add_colorbar()
     gc.set_theme('publication')
     gc.colorbar.set_width(0.2)
-    gc.colorbar.set_axis_label_text('K')
-    gc.colorbar.set_font(size=20)
-    gc.set_tick_labels_font(size=20)
-    gc.set_axis_labels_font(size=20)
+    gc.colorbar.set_axis_label_text(r'$\rm K$')
     plt.savefig(pdfname,bbox_inches='tight')
     #plt.show()
     os.system('open '+pdfname)
