@@ -195,10 +195,15 @@ cube_halfmax=mmap_halfmax[0].data
 panelnum = 2
 ax2 = plt.subplot(gs[panelnum-1])
 ax2.imshow(cube,cmap='gray_r',aspect='auto',extent=[0,naxis1+0.5,naxis2-0.5,-0.5],interpolation='bicubic')
-plt.contour(cube_halfmax,levels=[0,1],colors='gray')
+ax2.contour(cube_halfmax,levels=[0,1],colors='gray')
 #ax2.set_xticklabels(ax2.get_xlabel(),visible=True)
 ax2.scatter((coreveldiffysoyes-crval1)/cdelt1,(offsetysoyesarr-crval2)/cdelt2,facecolors='b',zorder=2)
 ax2.scatter((coreveldiffysono-crval1)/cdelt1,(offsetysonoarr-crval2)/cdelt2,facecolors='y',zorder=3)
+totalveldiff = np.concatenate((coreveldiffysoyes,coreveldiffysono))
+totaloffset = np.concatenate((offsetysoyesarr,offsetysonoarr))
+bincenters = np.arange(45.,-69.,-6.) # bin every 6 arcmin
+binveldiff = np.array([np.nanmean(totalveldiff[(totaloffset>ii-3.)&(totaloffset<ii+3.)]) for ii in bincenters])
+ax2.scatter((binveldiff-crval1)/cdelt1,(bincenters-crval2)/cdelt2,s=500,linewidths=2,facecolors='none',edgecolors='red',zorder=4)
 ax2.set_xticks(velpix)
 ax2.set_xticklabels(veltickslatex)
 ax2.set_yticks(pospix)

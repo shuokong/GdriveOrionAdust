@@ -150,8 +150,9 @@ def getbindata(ffalma,ffmirex,mirexfac,contrms,snr,printbins=0):
     return bbins,probabilities,errors
 
 p=plt.figure(figsize=(7,6))
-plt.subplots_adjust(top=0.94,bottom=0.13,left=0.13,right=0.96)
+plt.subplots_adjust(top=0.89,bottom=0.12,left=0.12,right=0.96)
 ax=p.add_subplot(111)
+ax2 = ax.twiny()
 #plt.xlim(0,150)
 ## linear scale
 if scale == 'lin':
@@ -164,7 +165,7 @@ if scale == 'lin':
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
     ksx1 = np.copy(x)
     ksy1 = np.copy(y)
-    plt.errorbar(x,y,yerr=yerror,fmt='b.',marker='.',markeredgecolor='blue',markerfacecolor='blue',ecolor='b',markersize=10,capthick=1.5,label=r'Orion A 15 K')
+    ax.errorbar(x,y,yerr=yerror,fmt='b.',marker='.',markeredgecolor='blue',markerfacecolor='blue',ecolor='b',markersize=10,capthick=1.5,label=r'Orion A 15 K')
     # use 20 K for Kirk17 cores
     ffalma = 'OrionKLellipse_Lane_on_Stefan_header_CASA.fits'
     ffmirex = 'OrionKLellipse_mask_emap_Orion_A_bw1.0.fits'
@@ -172,7 +173,7 @@ if scale == 'lin':
     contrms = 10.e-3
     snr = 142./0.636
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
-    plt.errorbar(x,y,yerr=yerror,fmt='c.',marker='.',markeredgecolor='c',markerfacecolor='c',ecolor='c',capthick=1.5,label=r'Orion A 20 K')
+    ax.errorbar(x,y,yerr=yerror,fmt='c.',marker='.',markeredgecolor='c',markerfacecolor='c',ecolor='c',capthick=1.5,label=r'Orion A 20 K')
     # alma in K18
     ffalma = 'rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
     ffmirex = 'wadiao_mirex_on_alma_header_uvtaper.fits'
@@ -180,7 +181,7 @@ if scale == 'lin':
     contrms = 2.e-4
     snr = 3.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
-    plt.errorbar(x,y,yerr=yerror,fmt='k.',marker='.',markeredgecolor='black',markerfacecolor='black',markersize=10,ecolor='black',capthick=1.5,label=r'IRDC G28.37')
+    ax.errorbar(x,y,yerr=yerror,fmt='k.',marker='.',markeredgecolor='black',markerfacecolor='black',markersize=10,ecolor='black',capthick=1.5,label=r'IRDC G28')
     # smooth4p8 alma from K18
     ffalma = 'convol4p8_rebin1p2_pbcor2_uvtaper_briggs_IRDC_C_calibrated_final_cont_2015_image.fits'
     ffmirex = 'smooth4p8_wadiao_mirex_on_alma_header_uvtaper.fits'
@@ -190,15 +191,24 @@ if scale == 'lin':
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr)
     ksx2 = np.copy(x)
     ksy2 = np.copy(y)
-    plt.errorbar(x,y,yerr=yerror,fmt='r.',marker='.',markeredgecolor='red',markerfacecolor='red',ecolor='r',capthick=1.5,label=r'IRDC G28.37 smoothed')
-    plt.ylim(-0.1,1.1)
-    plt.xlim(0,0.8)
-    ax.legend(labelspacing=0.1,loc=4,fontsize=12)
+    ax.errorbar(x,y,yerr=yerror,fmt='r.',marker='.',markeredgecolor='red',markerfacecolor='red',ecolor='r',capthick=1.5,label=r'G28 smoothed')
+    ax.set_ylim(-0.1,1.1)
+    ax.set_xlim(0,0.8)
+    ax.legend(labelspacing=0.1,loc=2,borderaxespad=2)
     plt.minorticks_on()
     ax.xaxis.set_minor_locator(AutoMinorLocator(5))
     ax.yaxis.set_minor_locator(AutoMinorLocator(5))
     ax.tick_params(which='both',axis='both',direction='in')
     ax.text(0.05, 0.95,r'(a)',horizontalalignment='left',verticalalignment='center',transform = ax.transAxes)
+    ax.set_xlabel(r'$\rm \Sigma~(g~cm^{-2})$')
+    ax.set_ylabel(r'$\rm continuum~detection~probability$')
+    ax2_tick_locations = np.array([0.,0.2,0.4,0.6,0.8])
+    ax2.set_xlim(ax.get_xlim())
+    ax2.set_xticks(ax2_tick_locations)
+    ax2.set_xticklabels([r'$\rm '+str(int(ii*214.))+r'$' for ii in ax2_tick_locations])
+    ax2.set_xlabel(r"$\rm cloud~A_V~(mag)$")
+    ax2.xaxis.set_minor_locator(AutoMinorLocator(5))
+    ax2.tick_params(which='both',axis='both',direction='in')
     pdfname = 'dpf_Orion_G28.pdf'
 ## logscale
 if scale == 'log':
@@ -223,8 +233,6 @@ if scale == 'log':
     pdfname = 'dpf_snr'+str(snr)+'_log.pdf'
 ###  
 #print len(mirex_data),mirex_data
-plt.ylabel(r'$\rm detection~probability$')
-plt.xlabel(r'$\rm \Sigma~(g~cm^{-2})$')
 os.system('rm '+pdfname)
 plt.savefig(pdfname)
 os.system('open '+pdfname)

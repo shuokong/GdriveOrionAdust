@@ -12,6 +12,11 @@ mymask = r.get_mask(hdu=hdu1)
 hdu1.data[mymask] = np.nan
 fits.writeto('OrionKLellipse_Lane_on_Stefan_header_CASA.fits', hdu1.data, hdu1.header, clobber=True)
 
+hdu1 = fits.open('Lane2016/nofreq_OrionA_850_auto_mos_clip.fits')[0]
+mymask = r.get_mask(hdu=hdu1)
+hdu1.data[mymask] = np.nan
+fits.writeto('OrionKLellipse_nofreq_OrionA_850_auto_mos_clip.fits', hdu1.data, hdu1.header, clobber=True)
+
 hdu1 = fits.open('mask_emap_Orion_A_bw1.0.fits')[0]
 mymask = r.get_mask(hdu=hdu1)
 hdu1.data[mymask] = np.nan

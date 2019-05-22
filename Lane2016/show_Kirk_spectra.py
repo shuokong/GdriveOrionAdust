@@ -16,8 +16,8 @@ rc('font', **font)
 
 lletter = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
-def gaus(x,a,x0,sigma):
-    return a/sigma*np.exp(-(x-x0)**2/(2*sigma**2))
+def gaus(x,x0,a,sigma):
+    return a * np.exp(-(x-x0)**2/(2.*sigma**2))
 
 def multigaus(x, *params):
     y = np.zeros_like(x)
@@ -526,10 +526,15 @@ ypanelwidth = 5
 vlow = 0
 vhigh = 16
 cols = len(corenames)
+#cols = 3 # test
 corevelocities = [[],[],[]]
 coremom0s = [[],[],[]]
 coremom1s = [[],[],[]]
 coremom2s = [[],[],[]]
+selected_corenames = [[]]
+selected_coremasses = [[]]
+selected_xw = [[]]
+selected_yw = [[]]
 nh3velocities = [[]]
 nh3evelocities = [[]]
 nh3tkin = [[]]
@@ -539,7 +544,12 @@ coregaus_ex0 = [[],[],[]]
 coregaus_sigma = [[],[],[]]
 coregaus_esigma = [[],[],[]]
 for cc in range(cols):
-    #if str(int(corenames[cc])) not in multiGaussDict.keys(): continue
+    #if str(int(corenames[cc])) in multiGaussDict.keys(): continue # whether include multiGaussDict
+    if str(int(corenames[cc])) not in multiGaussDict.keys(): continue # whether include single components
+    selected_corenames[0].append(corenames[cc])
+    selected_coremasses[0].append(coremasses[cc])
+    selected_xw[0].append(xw[cc])
+    selected_yw[0].append(yw[cc])
     fig=plt.figure(figsize=(xpanelwidth*xpanels*1.1,ypanelwidth*ypanels/1.1))
     plt.subplots_adjust(wspace=0.001,hspace=0.001)
     #pdfname='corespectra/Kirk/single_convol32_averspec_Kirk_core'+str(cc+1)+'.pdf'
@@ -661,6 +671,9 @@ for cc in range(cols):
                 datafiles['panel'+str(panel)]['vertlinecolors'].append('g')
                 datafiles['panel'+str(panel)]['vertlinewidths'].append(4)
                 datafiles['panel'+str(panel)]['vertlinelengths'].append(0.7)
+                if str(int(corenames[cc])) in multiGaussDict.keys():
+                    for cn in range(component_number):
+                        datafiles['panel'+str(panel)]['lines'][str(2+cn+1)]={'x':velocity,'y':gaus(velocity,popt[cn*3],popt[cn*3+1],popt[cn*3+2]),'legends':'','linestyles':'g:','drawsty':'default'}
     if datafiles == {}: continue
     for i in range(0,xpanels):
         for j in range(0,ypanels):
@@ -723,8 +736,8 @@ for cc in range(cols):
     plt.close(fig)
     #os.system('open '+pdfname)
     #os.system('cp '+pdfname+os.path.expandvars(' ${DROPATH}/highres'))
-savetxtarr = np.stack((corenames,xw,yw,coremasses,corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0],nh3evelocities[0],nh3tkin[0],coregaus_x0[1],coregaus_ex0[1],coregaus_sigma[1],coregaus_esigma[1],coregaus_x0[2],coregaus_ex0[2],coregaus_sigma[2],coregaus_esigma[2]),axis=1)
-np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
+savetxtarr = np.stack((selected_corenames[0],selected_xw[0],selected_yw[0],selected_coremasses[0],corevelocities[0],coresnr[0],coremom0s[0],coremom1s[0],coremom2s[0],corevelocities[1],coresnr[1],coremom0s[1],coremom1s[1],coremom2s[1],corevelocities[2],coresnr[2],coremom0s[2],coremom1s[2],coremom2s[2],nh3velocities[0],nh3evelocities[0],nh3tkin[0],coregaus_x0[1],coregaus_ex0[1],coregaus_sigma[1],coregaus_esigma[1],coregaus_x0[2],coregaus_ex0[2],coregaus_sigma[2],coregaus_esigma[2]),axis=1)
+#np.savetxt('convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
 #np.savetxt('single_convol32_Kirkcores_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
 #np.savetxt('convol32_Kirkcores_all0p25channel_velocities.txt',savetxtarr,fmt='%3d %10.5f %10.5f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %5.2f %5.1f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f %7.2f %5.2f')
 
