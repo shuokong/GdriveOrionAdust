@@ -218,11 +218,12 @@ if scale == 'lin':
     snr = 10.
     x,y,yerror = getbindata(ffalma,ffmirex,mirexfac,contrms,snr,avmin,avmax,nnbins)
     fr_10_20 = (x>10)&(x<20)
-    ppp = np.polyfit(x[fr_10_20],y[fr_10_20],deg=1,w=yerror[fr_10_20])
-    print 'fr_10_20 ppp',ppp
+    ppp,vvv = np.polyfit(x[fr_10_20],y[fr_10_20],deg=1,w=yerror[fr_10_20],cov=True)
+    print 'fr_10_20 ppp',ppp,'vvv',vvv,'slope sigma',vvv[0,0]**0.5
     fr_20_30 = (x>20)&(x<30)
-    ppp = np.polyfit(x[fr_20_30],y[fr_20_30],deg=1,w=yerror[fr_20_30])
-    print 'fr_20_30 ppp',ppp
+    ppp,vvv = np.polyfit(x[fr_20_30],y[fr_20_30],deg=1,w=yerror[fr_20_30],cov=True)
+    print 'fr_20_30 ppp',ppp,'vvv',vvv,'slope sigma',vvv[0,0]**0.5
+    sys.exit()
     ax.errorbar(x,y,yerr=yerror,fmt='b.',ecolor='b',capthick=1.5,zorder=2,label=r'$\rm pixel~SNR\geq~$'+str(int(snr)))
     ax.errorbar(bincenter,dpf_hist,yerr=(dpf_hist*(1-dpf_hist)/av_hist)**0.5,drawstyle='steps-mid',color='k',capthick=1.5,zorder=2,label=r'$\rm core$')
     ax.vlines(20,-0.1,0.7,linestyles='dashed')
